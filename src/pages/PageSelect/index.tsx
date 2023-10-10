@@ -13,6 +13,7 @@ export default function PageSelect() {
   // TODO: depends on user
   function List() {
     return (
+      
       <div className="mt-16 grid space-y-4">
         <UserComponent />
         {/* {user.role === 'user' && <UserComponent />}
@@ -20,11 +21,13 @@ export default function PageSelect() {
       {user.role === 'coordinator' && <CoordinatorComponent />}
       {user.role === 'admin' && <AdminComponent />} */}
       </div>
+      
     )
   }
   function UserComponent() {
     return (
-      <div>
+      
+      <div className="flex flex-col items-center space-y-4">
         <Precruise />
         <Postcruise />
         {/* <button onClick="window.location.href='';">Add Dives</button> */}
