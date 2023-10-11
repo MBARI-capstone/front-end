@@ -40,7 +40,7 @@ const Login = ({ href }) => {
       </div> */}
       <div className="flex min-h-md flex-1 flex-col justify-center px-6 py-1 lg:px-8">
         <div>
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight  text-cyan-900">
             LOGIN
           </h2>
         </div>
@@ -79,11 +79,15 @@ const Login = ({ href }) => {
                 />
               </div>
             </div>
-
-            <div>
+            <div className="flex items-center justify-center h-full  ">
+            
               {/* <SignInbutton onSignIn={() => checkValidUser} /> */}
               {/* <button onClick={() => router.push('/pageSelect')}>login</button> */}
-              <Link href={href}>login</Link>
+              <div className="flex items-center justify-center h-12 px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
+              <Link href={href}>Login
+              </Link>
+              </div>
+              
             </div>
           </form>
         </div>
