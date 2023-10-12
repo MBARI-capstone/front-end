@@ -1,9 +1,11 @@
 import React from 'react'
+import Navbar from "../components/Navbar";
 
 const postCruiseForm = () => {
   return (
-    <div>postCruiseForm</div>
-    
+    <div>
+      <Navbar currentPage="postcruise" />
+    </div>
   )
 }
 

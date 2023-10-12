@@ -1,32 +1,32 @@
-import Link from 'next/link'
-import React, { useState } from 'react'
-import SignInbutton from './SignInbutton'
+import Link from "next/link";
+import React, { useState } from "react";
+import SignInbutton from "./SignInbutton";
 
 const Login = ({ href }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const checkValidUser = () => {
     //Simulated validation Logic
     const validUsers = [
-      { username: 'mbariemployee', password: 'pass1' },
-      { username: 'registerduser', password: 'pass2' },
-      { username: 'logcordinator', password: 'pass3' },
-      { username: 'admin', password: 'pass4' },
-    ]
+      { username: "mbariemployee", password: "pass1" },
+      { username: "registerduser", password: "pass2" },
+      { username: "logcordinator", password: "pass3" },
+      { username: "admin", password: "pass4" },
+    ];
 
     const isValid = validUsers.some(
       (user) => user.username === username && user.password === password
-    )
+    );
 
     if (isValid) {
-      console.log('Valid user!')
+      console.log("Valid user!");
       // Handle success (e.g., navigate to another page)
     } else {
-      console.log('Invalid user!')
+      console.log("Invalid user!");
       // Handle failure (e.g., show an error message)
     }
-  }
+  };
   return (
     <>
       {/* <div className="h-max mx-auto flex flex-col items-center">
@@ -80,20 +80,17 @@ const Login = ({ href }) => {
               </div>
             </div>
             <div className="flex items-center justify-center h-full  ">
-            
               {/* <SignInbutton onSignIn={() => checkValidUser} /> */}
               {/* <button onClick={() => router.push('/pageSelect')}>login</button> */}
               <div className="flex items-center justify-center h-12 px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
-              <Link href={href}>Login
-              </Link>
+                <Link href={href}>Login</Link>
               </div>
-              
             </div>
           </form>
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
