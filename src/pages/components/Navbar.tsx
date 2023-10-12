@@ -26,8 +26,11 @@ const callsToAction = [
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
+type NavbarProps = {
+  currentPage: "postcruise" | "precruise";
+};
 
-function Navbar({ currentPage }){
+const Navbar: React.FC<NavbarProps> = ({ currentPage }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <header className="bg-white">
@@ -56,57 +59,32 @@ function Navbar({ currentPage }){
           </button>
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-12">
-          <Popover className="relative">
-            <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
-              Product
-              <ChevronDownIcon
-                className="h-5 w-5 flex-none text-gray-400"
-                aria-hidden="true"
-              />
-            </Popover.Button>
-
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-200"
-              enterFrom="opacity-0 translate-y-1"
-              enterTo="opacity-100 translate-y-0"
-              leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1"
-            >
-              <Popover.Panel className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
-                <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                  {callsToAction.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
-                    >
-                      <item.icon
-                        className="h-5 w-5 flex-none text-gray-400"
-                        aria-hidden="true"
-                      />
-                      {item.name}
-                    </a>
-                  ))}
-                </div>
-              </Popover.Panel>
-            </Transition>
-          </Popover>
-
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-            Features
+          <a
+            href="/PageSelect"
+            className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
+          >
+            Home
+          </a>
+          <a
+            href={
+              currentPage === "postcruise"
+                ? "/PreCruiseForm"
+                : "/PostCruiseForm"
+            }
+            className="text-sm font-semibold leading-6 text-gray-900"
+          >
+            {currentPage === "postcruise" ? "Pre-Cruise" : "Post-Cruise"}
           </a>
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-            Marketplace
+            Reports
           </a>
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-            Company
+            Dives
           </a>
         </Popover.Group>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-            Log in <span aria-hidden="true">&rarr;</span>
+            Log Out <span aria-hidden="true">&rarr;</span>
           </a>
         </div>
       </nav>
@@ -138,10 +116,12 @@ function Navbar({ currentPage }){
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
                 <a
-                  href={currentPage === 'postcruise' ? "/precruise" : "/postcruise"}
+                  href={
+                    currentPage === "postcruise" ? "/precruise" : "/postcruise"
+                  }
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
-                 {currentPage === 'postcruise' ? 'Pre-Cruise' : 'Post-Cruise'}
+                  {currentPage === "postcruise" ? "Pre-Cruise" : "Post-Cruise"}
                 </a>
                 <a
                   href="#"

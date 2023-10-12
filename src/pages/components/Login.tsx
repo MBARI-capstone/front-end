@@ -29,15 +29,7 @@ const Login = ({ href }) => {
   };
   return (
     <>
-      {/* <div className="h-max mx-auto flex flex-col items-center">
-        <Image
-          className="mx-auto"
-          src={logo}
-          alt="MBARI logo"
-          width={500}
-          height={500}
-        />
-      </div> */}
+      
       <div className="flex min-h-md flex-1 flex-col justify-center px-6 py-1 lg:px-8">
         <div>
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight  text-cyan-900">
