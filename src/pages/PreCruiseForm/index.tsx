@@ -1,40 +1,75 @@
 import React from "react";
-import Image from "next/image";
-import { Fragment, useState } from "react";
 
 import Navbar from "../components/Navbar";
 
 const preCruiseForm = () => {
   return (
-    <div className="h-screen overflow-y-auto">
+    <div className="h-screen  overflow-y-auto">
       <Navbar currentPage="precruise" className="sticky top-0 z-10" />
       <div className="bg-gray-100 flex flex-col items-center justify-center font-sans text-cyan-900 pt-24">
-        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-lg">
-          <h1 className="mb-2 text-2xl text-center text-cyan-900 font-bold">Pre-Cruise Form</h1>
+      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl">
+          <h1 className="mb-2 text-2xl text-center text-cyan-900 font-bold">
+            Pre-Cruise Form
+          </h1>
           <form method="post">
             <fieldset>
               <p className="mb-4 text-sm text-center italic">
                 Please fill out all the information below in order to submit a
                 request for a pre cruise approval.
               </p>
-
-              <label
-                htmlFor="shipName"
-                className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
-              >
-                Ship Name:
-                <select
-                  id="shipName"
-                  className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                  required
+              <div className="flex flex-wrap">
+                <label
+                  htmlFor="shipName"
+                  className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4"
                 >
-                  <option value="">(Select One)</option>
-                  <option value="1">Ship 1</option>
-                  <option value="2">Ship 2</option>
-                  <option value="3">Ship 3</option>
-                </select>
-              </label>
-              <br />
+                  Ship Name:
+                  <select
+                    id="shipName"
+                    className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                    required
+                  >
+                    <option value="">(Select One)</option>
+                    <option value="1">Ship 1</option>
+                    <option value="2">Ship 2</option>
+                    <option value="3">Ship 3</option>
+                  </select>
+                </label>
+                <br />
+
+                <label
+                  htmlFor="chiefScientist"
+                  className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4"
+                >
+                  Chief Scientist:
+                  <select
+                    id="chiefScientist"
+                    className="block appearance-none w-full bg-white border border-gray-400  hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                    required
+                  >
+                    <option value="">(Select One)</option>
+                    <option value="1">Scientist 1</option>
+                    <option value="2">Scientist 2</option>
+                    <option value="3">Scientist 3</option>
+                  </select>
+                </label>
+                <br />
+                <label
+                  htmlFor="principalInvestigator"
+                  className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
+                >
+                  Principal Investigator:
+                  <select
+                    id="principalInvestigator"
+                    className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                    required
+                  >
+                    <option value="">(Select One)</option>
+                    <option value="1">Investigator 1</option>
+                    <option value="2">Investigator 2</option>
+                    <option value="3">Investigator 3</option>
+                  </select>
+                </label>
+              </div>
               <label
                 htmlFor="purpose"
                 className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
@@ -52,40 +87,7 @@ const preCruiseForm = () => {
                 ></textarea>
               </label>
 
-              <label
-                htmlFor="chiefScientist"
-                className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
-              >
-                Chief Scientist:
-                <select
-                  id="chiefScientist"
-                  className="block appearance-none w-full bg-white border border-gray-400  hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                  required
-                >
-                  <option value="">(Select One)</option>
-                  <option value="1">Scientist 1</option>
-                  <option value="2">Scientist 2</option>
-                  <option value="3">Scientist 3</option>
-                </select>
-              </label>
-              <br />
-              <label
-                htmlFor="principalInvestigator"
-                className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
-              >
-                Principal Investigator:
-                <select
-                  id="principalInvestigator"
-                  className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                  required
-                >
-                  <option value="">(Select One)</option>
-                  <option value="1">Investigator 1</option>
-                  <option value="2">Investigator 2</option>
-                  <option value="3">Investigator 3</option>
-                </select>
-              </label>
-              <br />
+              
               <label
                 htmlFor="scheduledStartDatetime"
                 className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
@@ -139,7 +141,7 @@ const preCruiseForm = () => {
                   required
                 ></textarea>
               </label>
-              <br />
+              
               <label
                 htmlFor="participants"
                 className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
@@ -155,7 +157,7 @@ const preCruiseForm = () => {
                   required
                 ></textarea>
               </label>
-              <br />
+              
               <label
                 htmlFor="regionDescription"
                 className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
@@ -171,7 +173,7 @@ const preCruiseForm = () => {
                   required
                 ></textarea>
               </label>
-              <br />
+              
               <label
                 htmlFor="plannedTrackDescription"
                 className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
@@ -188,7 +190,11 @@ const preCruiseForm = () => {
                 ></textarea>
               </label>
             </fieldset>
-            <input type="submit" className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline" value="Submit" />
+            <input
+              type="submit"
+              className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline"
+              value="Submit"
+            />
           </form>
         </div>
       </div>
