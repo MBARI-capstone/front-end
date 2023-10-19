@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8">
+    <title>Reports Search</title>
+    <link href="styles/style.css" rel="stylesheet" type="text/css" />
+  </head>
+  
+  <body>
+    <main>
+      <div class="logoAndTitle">
+        <img class="logo"></img>
+        <h1>Advanced Search of Expedition Database</h1>
+      </div>
+      <p>Enter any of the parameters below to restrict search for expeditions.</p>
+      
+      <form method="post">
+        
+                  <!-- Here is where all the inputs go -->
+        <div class="searchInputs">
+          
+          <!-- here is for selectors shared by both pre and post cruise, INCLUDING text entry for all text fields -->
+          <!-- INCLUDES: purpose, equipmentDescription, regionDescription, plannedTrackDescription, participants, acomplishmnts, scientistComments, opperatorComments, otherComments, & briefAccomplishments (from dive) -->
+          <div class="globalSelectors">
+            <p>Search for an Expedition by Expedition Parameters</p>
+            
+            <label for="keywordSearch">Key-word or Phrase
+            <textarea id="keywordSearch" name="keywordSearch" rows="3" cols="30" placeholder="Enter a keyword or phrase to search all text feilds."></textarea></label>
+
+            <label for="anyDatetime">Start or End Datetime, Scheduled or Actual: 
+              <input type="date" id="anyDatetime" name="anyDatetime"></input>
+              <label for="timeRadio">Start or End Datetime, ACTUAL: 
+                <p>Start<input type="radio" id="timeRadio" name="timeRadio" value="startA"></input>
+                End<input type="radio" id="timeRadio" name="timeRadio" value="endA"></input></p>
+        
+              Start or End Datetime, SCHEDULED: 
+                <p>Start<input type="radio" id="timeRadio" name="timeRadio" value="startS"></input>
+                End<input type="radio" id="timeRadio" name="timeRadio" value="endS"></input></p>
+              </label></label>
+
+            <label for="shipNameSearch" name="shipNameSearch">Ship Name: 
+              <select id="shipNameSearch">
+                <option value="">(Select One)</option>
+                <option value="1">Ship 1</option>
+                <option value="2">Ship 2</option>
+                <option value="3">Ship 3</option>
+              </select>
+            </label>
+
+            <label for="chiefScientistSearch" name="chiefScientistSearch">Chief Scientist: 
+              <select id="chiefScientistSearch">
+                <option value="">(Select One)</option>
+                <option value="1">Scientist 1</option>
+                <option value="2">Scientist 2</option>
+                <option value="3">Scientist 3</option>
+              </select>
+            </label>
+
+            <label for="principalInvestigatorSearch" name="principalInvestigatorSearch">Principal Investigator: 
+              <select id="principalInvestigatorSearch">
+                <option value="">(Select One)</option>
+                <option value="1">Investigator 1</option>
+                <option value="2">Investigator 2</option>
+                <option value="3">Investigator 3</option>
+              </select>
+            </label>
+
+            <label for="updatedBySearch">ID of who added expedition to database:
+              <input type="number" id="updatedBySearch" name="updatedBySearch"></input>
+            </label>
+
+            <label for="scientistObjectivesMet">All Scientist Objectives Met: 
+              <p>Yes<input type="radio" id="scientistObjectivesMet" name="scientistObjectivesMet" value="sciObjYes"></input>
+              No<input type="radio" id="scientistObjectivesMet" name="scientistObjectivesMet" value="SciObjNo"></input></p>
+            </label>
+
+            <label for="equipmentFunctioned">All Equipment Functioned: 
+              <p>Yes<input type="radio" id="equipmentFunctioned" name="equipmentFunctioned" value="equipYes"></input>
+              No<input type="radio" id="equipmentFunctioned" name="equipmentFunctioned" value="equipNo"></input></p>
+            </label>
+            
+          </div>
+
+          <!-- Here is for selectors specific to pre cruise -->
+          <div class="preCruiseSelectors">
+            
+          </div>
+
+          <!-- Here is for selectors specific to post cruise -->
+          <div class="postCruiseSelectors">
+            
+          </div>
+
+          <!-- Here is for selectors specific to a dive -->
+          <div class="diveSelectors">
+            <p>Search for an Expedition by Dive Parameters: </p>
+
+            <label for="diveTime">Time of Dive: 
+              <input type="date" id="diveTimeSearch" name="diveTimeSearch" required></input>
+              <p>Start<input type="radio" id="diveTime" name="diveTime" value="startD"></input>
+              End<input type="radio" id="diveTime" name="diveTime" value="endD"></input></p>
+            </label>
+
+            <label for="rovNameSearch" name="rovNameSearch">ROV Name: 
+              <select id="rovNameSearch">
+                <option value="">(Select One)</option>
+                <option value="1">ROV 1</option>
+                <option value="2">ROV 2</option>
+                <option value="3">ROV 3</option>
+              </select>
+            </label>
+
+            <label for="diveNumberSearch">ID of who added expedition to database:
+              <input id="diveNumberSearch" name="diveNumberSearch" type="number"></input>
+            </label>
+
+            <label for="diveChiefScientistSearch" name="diveChiefScientistSearch">Chief Scientist: 
+              <select id="diveChiefScientistSearch">
+                <option value="">(Select One)</option>
+                <option value="1">Scientist 1</option>
+                <option value="2">Scientist 2</option>
+                <option value="3">Scientist 3</option>
+              </select>
+            </label>
+            
+          </div>
+          
+        </div>
+        
+        <input type="submit" value="Search" />
+        <button onclick="window.location.href='pageSelector.html';" id="back" name="back">Back</button>
+        
+      </form>
+        
+    </main>
+  </body>
+  
+</html>
