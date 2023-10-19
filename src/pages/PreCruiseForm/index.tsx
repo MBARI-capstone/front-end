@@ -1,6 +1,7 @@
 import React from "react";
 
 import Navbar from "../components/Navbar";
+import BackButton from "../components/BackButton";
 
 const preCruiseForm = () => {
   return (
@@ -190,11 +191,18 @@ const preCruiseForm = () => {
                 ></textarea>
               </label>
             </fieldset>
-            <input
-              type="submit"
-              className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline"
-              value="Submit"
-            />
+            <div>
+              <div className="flex ">
+                <input
+                  type="submit"
+                  className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
+                  value="Submit"
+                />
+                {/* <button onclick="window.location.href='../pageSelector.html'" id="back" name="back">Back</button> */}
+                <div></div>
+                <BackButton hrefLink="/PageSelect" buttonName="Back" />
+              </div>
+            </div>
           </form>
         </div>
       </div>

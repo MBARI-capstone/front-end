@@ -4,7 +4,7 @@ import logo from '/public/MBARI-Logo.png'
 
 export default function Home() {
   return (
-    <main className="overflow-hidden min-h-screen  bg-blue-100 flex flex-col  items-start sm:py-10">
+    <main className="overflow-hidden min-h-screen  bg-custom-blue flex flex-col  items-start sm:py-10">
       <div className="h-max mx-auto flex flex-col items-center">
         <Image
           className="mx-auto drop-shadow-2xl "

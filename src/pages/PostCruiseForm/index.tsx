@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import Button from "../components/button";
+import BackButton from "../components/BackButton";
 
 const postCruiseForm = () => {
   return (
@@ -125,9 +126,18 @@ const postCruiseForm = () => {
               ></textarea>
             </label>
             {/* <!-- Need to also submit the ID of the user who submitted the form, will be recorded on database, but not listed on form. Can be retrieved from database based on who is logged in --> */}
-            <input type="submit" value="Submit" />
-            {/* <button onclick="window.location.href='../pageSelector.html'" id="back" name="back">Back</button> */}
-            <Button hrefLink="/pageSelect" buttonName="Back" />
+            <div>
+              <div className="flex ">
+                <input
+                  type="submit"
+                  className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
+                  value="Submit"
+                />
+                {/* <button onclick="window.location.href='../pageSelector.html'" id="back" name="back">Back</button> */}
+                <div></div>
+                <BackButton hrefLink="/PageSelect" buttonName="Back" />
+              </div>
+            </div>
           </form>
         </div>
       </div>

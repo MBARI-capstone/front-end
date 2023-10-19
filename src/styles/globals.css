@@ -39,3 +39,16 @@ body {
   flex-direction: column;
   align-items: center;
 }
+
+@font-face {
+  font-family: 'NeueHaasDisplayBoldItalic';
+  src: url('/src/assets/Fonts/NeueHaasDisplayBlack.tff') format('truetype'); /* Replace with the path to your font files */
+  font-weight: 700;
+  font-style: normal; /* Adjust based on your font's styles */
+}
+
+.custom-font {
+  font-family: 'NeueHaasDisplayBoldItalic', sans-serif;
+  color: #22455c;
+  font-weight: 700;
+}
