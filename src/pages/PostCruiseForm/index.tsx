@@ -7,7 +7,7 @@ const postCruiseForm = () => {
   return (
     <div className="h-screen overflow-y-auto">
       <Navbar currentPage="postcruise" className="sticky top-0 z-10" />
-      <div className="bg-gray-100 flex flex-col items-center justify-center font-sans text-cyan-900 pt-24">
+      <div className="bg-custom-blue flex flex-col items-center justify-center font-sans text-cyan-900 pt-24">
         <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl">
           <h1 className="mb-2 text-2xl text-center text-cyan-900 font-bold">
             Post-Cruise Form
