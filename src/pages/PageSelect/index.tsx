@@ -6,7 +6,7 @@ import {
   Logout,
   Postcruise,
   Precruise,
-  Reports,
+  ReportsSearch,
 } from '../components/Page'
 
 export default function PageSelect() {
@@ -31,7 +31,7 @@ export default function PageSelect() {
         <Precruise />
         <Postcruise />
         {/* <button onClick="window.location.href='';">Add Dives</button> */}
-        <Reports />
+        <ReportsSearch />
         <Logout />
       </div>
     )
@@ -44,7 +44,7 @@ export default function PageSelect() {
     return (
       <div>
         {/* <button onClick="window.location.href='';">Add Dives</button */}
-        <Reports />
+        <ReportsSearch />
         <Logout />
       </div>
     )
@@ -59,7 +59,7 @@ export default function PageSelect() {
         <Precruise />
         <Postcruise />
         {/* <button onClick="window.location.href='';">Add Dives</button> */}
-        <Reports />
+        <ReportsSearch />
         <Logout />
       </div>
     )
@@ -74,7 +74,7 @@ export default function PageSelect() {
         <Precruise />
         <Postcruise />
         {/* <button onClick="window.location.href='';">Add Dives</button> */}
-        <Reports />
+        <ReportsSearch />
         <Database />
         <Logout />
       </div>

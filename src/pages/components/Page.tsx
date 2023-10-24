@@ -13,9 +13,9 @@ export const Postcruise = () => {
   );
 };
 
-export const Reports = () => {
+export const ReportsSearch = () => {
   return (
-    <Button hrefLink="" buttonName="Reports Search"/>
+    <Button hrefLink="/ReportsSearch" buttonName="Reports Search"/>
   );
 };
 
