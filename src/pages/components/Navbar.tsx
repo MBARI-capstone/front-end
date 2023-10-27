@@ -12,20 +12,7 @@ import {
   SquaresPlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  PhoneIcon,
-  PlayCircleIcon,
-} from "@heroicons/react/20/solid";
 
-const callsToAction = [
-  { name: "Watch demo", href: "#", icon: PlayCircleIcon },
-  { name: "Contact sales", href: "#", icon: PhoneIcon },
-];
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
 type NavbarProps = {
   currentPage: "postcruise" | "precruise";
   className?: string;
@@ -79,13 +66,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
               {currentPage === "postcruise" ? "Pre-Cruise" : "Post-Cruise"}
             </a>
             <a
-              href="#"
+              href="/ReportsSearch"
               className="text-sm font-semibold leading-6 text-gray-900"
             >
               Reports
             </a>
             <a
-              href="#"
+              href="/Dives"
               className="text-sm font-semibold leading-6 text-gray-900"
             >
               Dives
@@ -147,13 +134,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
                   </a>
 
                   <a
-                    href="#"
+                    href="/ReportsSearch"
                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
                     Reports
                   </a>
                   <a
-                    href="#"
+                    href="/Dives"
                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
                     Dives

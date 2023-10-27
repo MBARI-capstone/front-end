@@ -126,17 +126,15 @@ const postCruiseForm = () => {
               ></textarea>
             </label>
             {/* <!-- Need to also submit the ID of the user who submitted the form, will be recorded on database, but not listed on form. Can be retrieved from database based on who is logged in --> */}
-            <div>
-              <div className="flex ">
-                <input
-                  type="submit"
-                  className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
-                  value="Submit"
-                />
-                {/* <button onclick="window.location.href='../pageSelector.html'" id="back" name="back">Back</button> */}
-                <div></div>
-                <BackButton hrefLink="/PageSelect" buttonName="Back" />
-              </div>
+            <div className="flex flex-wrap">
+              {/* This creates a flexible space */}
+              <BackButton hrefLink="/PageSelect" buttonName="Back" />
+              <div className="flex-1"></div>{" "}
+              <input
+                type="submit"
+                className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
+                value="Submit"
+              />
             </div>
           </form>
         </div>

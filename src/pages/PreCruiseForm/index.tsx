@@ -114,9 +114,6 @@ const preCruiseForm = () => {
               >
                 Scheduled End Date time:
                 <div className="relative max-w-sm">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                  </div>
                   <input
                     type="date"
                     id="scheduledEndDatetime"
@@ -191,17 +188,15 @@ const preCruiseForm = () => {
                 ></textarea>
               </label>
             </fieldset>
-            <div>
-              <div className="flex ">
-                <input
-                  type="submit"
-                  className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
-                  value="Submit"
-                />
-                {/* <button onclick="window.location.href='../pageSelector.html'" id="back" name="back">Back</button> */}
-                <div></div>
-                <BackButton hrefLink="/PageSelect" buttonName="Back" />
-              </div>
+            <div className="flex flex-wrap">
+              {/* This creates a flexible space */}
+              <BackButton hrefLink="/PageSelect" buttonName="Back" />
+              <div className="flex-1"></div>{" "}
+              <input
+                type="submit"
+                className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
+                value="Submit"
+              />
             </div>
           </form>
         </div>

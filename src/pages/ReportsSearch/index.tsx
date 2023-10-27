@@ -242,123 +242,35 @@ const ReportsSearch = () => {
                   {/* <!-- Here is for selectors specific to a dive --> */}
                 </div>
               </div>
-              <div className="flex flex-row">
-                <div className="flex-1 flex flex-col p-4 ">
-                  <div>
-                    <label
-                      htmlFor="keywordSearch"
-                      className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
-                    >
-                      Key-word or Phrase
-                    </label>
-                    <textarea
-                      id="keywordSearch"
-                      name="keywordSearch"
-                      className="ml-2 h-8 mr- border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
-                      rows={3}
-                      cols={30}
-                      placeholder="Enter a keyword or phrase to search all text feilds."
-                    ></textarea>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="purpose"
-                      className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
-                    >
-                      Purpose
-                    </label>
-                    <textarea
-                      id="purpose"
-                      name="purpose"
-                      className="ml-2 h-8 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
-                      rows={3}
-                      cols={30}
-                      placeholder="Enter a purpose of expidition."
-                    ></textarea>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="siteTrack"
-                      className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
-                    >
-                      Site/Track
-                    </label>
-                    <textarea
-                      id="siteTrack"
-                      name="siteTrack"
-                      className="ml-2 h-8 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
-                      rows={3}
-                      cols={30}
-                      placeholder="Enter Site or Track."
-                    ></textarea>
-                  </div>
-                </div>
-
-                <div className="flex-1 flex flex-col p-4 ">
-                  <div>
-                    <label
-                      htmlFor="accomplishments"
-                      className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
-                    >
-                      Accomplishments
-                    </label>
-                    <textarea
-                      id="accomplishments"
-                      name="accomplishments"
-                      className="ml-2 h-8 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
-                      rows={3}
-                      cols={30}
-                      placeholder="Enter Accomplishments."
-                    ></textarea>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="opComments"
-                      className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
-                    >
-                      Operator Comments
-                    </label>
-                    <textarea
-                      id="opComments"
-                      name="opComments"
-                      className="ml-2 h-8 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
-                      rows={3}
-                      cols={30}
-                      placeholder="Enter Site or Track."
-                    ></textarea>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="sciComments"
-                      className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
-                    >
-                      Scientist Comments
-                    </label>
-                    <textarea
-                      id="sciComments"
-                      name="sciComments"
-                      className="ml-2 h-8 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
-                      rows={3}
-                      cols={30}
-                      placeholder="Enter Site or Track."
-                    ></textarea>
-                  </div>
+              <div className="flex flex-wrap">
+                <div className="w-full pb-4">
+                  <label
+                    htmlFor="keywordSearch"
+                    className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
+                  >
+                    Key-word or Phrase
+                  </label>
+                  <textarea
+                    id="keywordSearch"
+                    name="keywordSearch"
+                    className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                    rows={3}
+                    cols={30}
+                    placeholder="Enter a keyword or phrase to search all text fields."
+                  ></textarea>
                 </div>
               </div>
-              <div className="flex flex-wrap justify-end">
-                <input
-                  //Make a  Search Button
-                  type="submit"
-                  className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
-                  value="Submit"
-                />
-                {/* <button onclick="window.location.href='../pageSelector.html'" id="back" name="back">Back</button> */}
-                <div></div>
-                <BackButton hrefLink="/PageSelect" buttonName="Back" />
-              </div>
+
+              <div className="flex flex-wrap">
+              {/* This creates a flexible space */}
+              <BackButton hrefLink="/PageSelect" buttonName="Back" />
+              <div className="flex-1"></div>{" "}
+              <input
+                type="submit"
+                className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
+                value="Search"
+              />
+            </div>
             </form>
           </div>
         </div>
