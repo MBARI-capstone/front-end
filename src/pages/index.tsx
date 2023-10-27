@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import { Login } from './components'
-import logo from '/public/MBARI-Logo.png'
 
 export default function Home() {
   return (
@@ -8,7 +7,7 @@ export default function Home() {
       <div className="h-max mx-auto flex flex-col items-center">
         <Image
           className="mx-auto drop-shadow-2xl "
-          src={logo}
+          src="/MBARI-Logo.png"
           alt="MBARI logo"
           width={350}
           height={350}
