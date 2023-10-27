@@ -13,9 +13,11 @@ export const Postcruise = () => {
   );
 };
 
-export const Reports = () => {
+
+
+export const ReportsSearch = () => {
   return (
-    <Button hrefLink="" buttonName="Reports Search"/>
+    <Button hrefLink="/ReportsSearch" buttonName="Reports Search"/>
   );
 };
 
@@ -27,6 +29,6 @@ export const Database = () => {
 
 export const Logout = () => {
   return (
-    <Button hrefLink="" buttonName="Logout"/>
+    <Button hrefLink="/" buttonName="Logout"/>
   );
 };

@@ -12,20 +12,7 @@ import {
   SquaresPlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  PhoneIcon,
-  PlayCircleIcon,
-} from "@heroicons/react/20/solid";
 
-const callsToAction = [
-  { name: "Watch demo", href: "#", icon: PlayCircleIcon },
-  { name: "Contact sales", href: "#", icon: PhoneIcon },
-];
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
 type NavbarProps = {
   currentPage: "postcruise" | "precruise";
   className?: string;
@@ -44,11 +31,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
               <span className="sr-only">Your Company</span>
-              <img
+              <div
                 className="absolute top-0 left-0 h-40 w-auto md:block hidden"
-                src="/MBARI-Logo.png"
-                alt="mbarilogo"
-              />
+                // src="/MBARI-Logo.png"
+                // alt="mbarilogo"
+              >
+              <Image src="/MBARI-Logo.png" alt={"mbarilogo"} width={100} height={100} />
+              </div>
             </a>
           </div>
           <div className="flex lg:hidden">
@@ -79,13 +68,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
               {currentPage === "postcruise" ? "Pre-Cruise" : "Post-Cruise"}
             </a>
             <a
-              href="#"
+              href="/ReportsSearch"
               className="text-sm font-semibold leading-6 text-gray-900"
             >
               Reports
             </a>
             <a
-              href="#"
+              href="/Dives"
               className="text-sm font-semibold leading-6 text-gray-900"
             >
               Dives
@@ -93,7 +82,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
           </Popover.Group>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <a
-              href="#"
+              href="/"
               className="text-sm font-semibold leading-6 text-gray-900"
             >
               Log Out <span aria-hidden="true">&rarr;</span>
@@ -128,25 +117,32 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
               <div className="-my-6 divide-y divide-gray-500/10">
                 <div className="space-y-2 py-6">
                   <a
+                    href="/PageSelect"
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >
+                    Home
+                  </a>
+                  <a
                     href={
                       currentPage === "postcruise"
-                        ? "/precruise"
-                        : "/postcruise"
+                        ? "/PreCruiseForm"
+                        : "/PostCruiseForm"
                     }
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    className="text-sm font-semibold leading-6 text-gray-900"
                   >
                     {currentPage === "postcruise"
                       ? "Pre-Cruise"
                       : "Post-Cruise"}
                   </a>
+
                   <a
-                    href="#"
+                    href="/ReportsSearch"
                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
                     Reports
                   </a>
                   <a
-                    href="#"
+                    href="/Dives"
                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
                     Dives
@@ -154,7 +150,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
                 </div>
                 <div className="py-6">
                   <a
-                    href="#"
+                    href="/"
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
                     Log Out

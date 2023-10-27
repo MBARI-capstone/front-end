@@ -1,12 +1,13 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import Button from "../components/button";
+import BackButton from "../components/BackButton";
 
 const postCruiseForm = () => {
   return (
     <div className="h-screen overflow-y-auto">
       <Navbar currentPage="postcruise" className="sticky top-0 z-10" />
-      <div className="bg-gray-100 flex flex-col items-center justify-center font-sans text-cyan-900 pt-24">
+      <div className="bg-custom-blue flex flex-col items-center justify-center font-sans text-cyan-900 pt-24">
         <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl">
           <h1 className="mb-2 text-2xl text-center text-cyan-900 font-bold">
             Post-Cruise Form
@@ -125,9 +126,16 @@ const postCruiseForm = () => {
               ></textarea>
             </label>
             {/* <!-- Need to also submit the ID of the user who submitted the form, will be recorded on database, but not listed on form. Can be retrieved from database based on who is logged in --> */}
-            <input type="submit" value="Submit" />
-            {/* <button onclick="window.location.href='../pageSelector.html'" id="back" name="back">Back</button> */}
-            <Button hrefLink="/pageSelect" buttonName="Back" />
+            <div className="flex flex-wrap">
+              {/* This creates a flexible space */}
+              <BackButton hrefLink="/PageSelect" buttonName="Back" />
+              <div className="flex-1"></div>{" "}
+              <input
+                type="submit"
+                className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
+                value="Submit"
+              />
+            </div>
           </form>
         </div>
       </div>

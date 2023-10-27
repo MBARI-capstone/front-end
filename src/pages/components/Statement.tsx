@@ -5,7 +5,7 @@ const Statement = () => {
     <div className="h-max mx-auto flex flex-col items-center">
         <Image
           className="mx-auto"
-          src="/MBARI Logo.png"
+          src="/MBARI-Logo.png"
           alt="MBARI logo"
           width={500}
           height={500}
