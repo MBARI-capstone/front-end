@@ -31,11 +31,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
               <span className="sr-only">Your Company</span>
-              <img
+              <div
                 className="absolute top-0 left-0 h-40 w-auto md:block hidden"
-                src="/MBARI-Logo.png"
-                alt="mbarilogo"
-              />
+                // src="/MBARI-Logo.png"
+                // alt="mbarilogo"
+              >
+              <Image src="/MBARI-Logo.png" alt={"mbarilogo"} width={100} height={100} />
+              </div>
             </a>
           </div>
           <div className="flex lg:hidden">
