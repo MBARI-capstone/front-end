@@ -3,40 +3,7 @@ import Navbar from "../components/Navbar";
 import BackButton from "../components/BackButton";
 
 const ReportsSearch = () => {
-  // const [searchCriteria, setSearchCriteria] = useState([
-  //   { field: "", value: "", logicalOperator: "AND" },
-  // ]);
 
-  // const handleInputChange = (e, index) => {
-  //   const { name, value } = e.target;
-  //   const updatedCriteria = [...searchCriteria];
-  //   updatedCriteria[index] = { ...updatedCriteria[index], [name]: value };
-  //   setSearchCriteria(updatedCriteria);
-  // };
-
-  // const handleAddCriteria = () => {
-  //   setSearchCriteria([
-  //     ...searchCriteria,
-  //     { field: "", value: "", logicalOperator: "AND" },
-  //   ]);
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-
-  //   // Construct the search query based on search criteria and logical operators
-  //   let searchQuery = "";
-
-  //   searchCriteria.forEach((criteria, index) => {
-  //     if (index > 0) {
-  //       searchQuery += ` ${criteria.logicalOperator} `;
-  //     }
-  //     searchQuery += `${criteria.field}: ${criteria.value}`;
-  //   });
-
-  //   // You can now use 'searchQuery' for your search operation
-  //   console.log("Search Query:", searchQuery);
-  // };
   return (
     <main>
       <div className="h-screen  overflow-y-auto ">
