@@ -2,21 +2,21 @@ import React from 'react'
 import Navbar from "../components/Navbar";
 import BackButton from "../components/BackButton";
 
-const DiveSearch = () => {
+const PreCruiseSearch = () => {
   return (
     <div className="h-screen  overflow-y-auto ">
       <Navbar currentPage="precruise" className="sticky top-0 z-10" />
       <div className="bg-custom-blue flex flex-col items-center justify-center font-sans text-cyan-900 pt-24">
-        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl">
+      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl">
           <h1 className="mb-2 text-2xl text-center text-cyan-900 font-bold">
-            Add Dive to Expedition
+            Pre-Cruise Search Form
           </h1>
-
-          <p className="mb-4 text-sm text-center italic">
-            Search for Expedition to add Dive.
-          </p>
           <form method="post">
-          <div className="flex flex-wrap">
+            <fieldset>
+              <p className="mb-4 text-sm text-center italic">
+                Search for Pre-Cruise to Add Post Cruise Form 
+              </p>
+              <div className="flex flex-wrap">
                 <label
                   htmlFor="shipName"
                   className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4"
@@ -69,8 +69,6 @@ const DiveSearch = () => {
                   </select>
                 </label>
               </div>
-
-
               
               <div className="flex flex-row">
                     <label
@@ -98,24 +96,39 @@ const DiveSearch = () => {
                         className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                       ></input>
                     </label>
-
-                    
-                        </div>
-            {/* <!-- Save the user ID when they add a dive --> */}
-            {/* <label htmlFor="diveNumber">ID of who added expedition to database:
-          <input id="diveNumber" name="diveNumber" type="number"></input>
-        </label> */}
+                </div>
+              <br />
+              <div className="flex flex-wrap">
+                <div className="w-full pb-4">
+                  <label
+                    htmlFor="keywordSearch"
+                    className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
+                  >
+                    Key-word or Phrase
+                  </label>
+                  <textarea
+                    id="keywordSearch"
+                    name="keywordSearch"
+                    className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                    rows={3}
+                    cols={30}
+                    placeholder="Enter a keyword or phrase to search all text fields."
+                  ></textarea>
+                </div>
+              </div>
+                            
+            </fieldset>
             <div className="flex flex-wrap">
               {/* This creates a flexible space */}
               <BackButton hrefLink="/PageSelect" buttonName="Back" />
               <div className="flex-1"></div>{" "}
-              <BackButton hrefLink="/Dives" buttonName="Add" />
+              <BackButton hrefLink="/PostCruiseForm" buttonName="Add" />
             </div>
           </form>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DiveSearch
+export default PreCruiseSearch

@@ -9,11 +9,15 @@ export const Precruise = () => {
 
 export const Postcruise = () => {
   return (
-    <Button hrefLink="/PostCruiseForm" buttonName="Post Cruise"/>
+    <Button hrefLink="/PreCruiseSearch" buttonName="Post Cruise"/>
   );
 };
 
-
+export const DiveSearch = () => {
+  return(
+    <Button hrefLink="/DiveSearch" buttonName = "Add Dive"/>
+  );
+}
 
 export const ReportsSearch = () => {
   return (

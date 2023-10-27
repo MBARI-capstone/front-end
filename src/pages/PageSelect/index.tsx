@@ -7,7 +7,9 @@ import {
   Postcruise,
   Precruise,
   ReportsSearch,
+  DiveSearch,
 } from '../components/Page'
+
 
 export default function PageSelect() {
   // TODO: depends on user
@@ -31,6 +33,7 @@ export default function PageSelect() {
       <div className="flex flex-col items-center space-y-4">
         <Precruise />
         <Postcruise />
+        <DiveSearch />
         {/* <button onClick="window.location.href='';">Add Dives</button> */}
         <ReportsSearch />
         <Logout />
