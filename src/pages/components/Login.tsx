@@ -5,11 +5,8 @@ import { useRouter } from 'next/router';
 
 interface LoginResponse {
   // Define the shape of your login response here
-  token: string;
-  user: {
-    username: string;
-    password: string; 
-  };
+  accessToken: string;
+  tokenType: string;
 }
 interface ErrorResponse {
   error: string;
@@ -25,10 +22,11 @@ const Login = () => {
     event.preventDefault();
 
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch('http://localhost:8080/api/v1.1/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+
         },
         body: JSON.stringify({
           username,
@@ -42,8 +40,10 @@ const Login = () => {
         throw new Error((data as ErrorResponse).error || 'Login failed');
       }
 
-      console.log('Login successful', data);
-      router.push('Navigation'); 
+      // if (data as )
+      console.log('Login successful', data.accessToken);
+      // cookie.add(data.tokenType + " " + data.accessToken);
+      router.push('PageSelect'); 
     } catch (error) {
       console.error('Login error:', error);
       if (error instanceof Error) {
