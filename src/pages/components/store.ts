@@ -1,5 +1,11 @@
-import { atom } from 'jotai';
+import { atom } from 'jotai'
 
-type UserRoleType = 'user' | 'employee' | 'coordinator' | 'admin' | null;
+export const UserRoleType = {
+  REGISTERED_USER: 'Registered User',
+  MBARI_EMPLOYEE: 'MBARI Employee',
+  LOGISTICS_COORDINATOR: 'Logistics Coordinator',
+  ADMIN: 'Admin',
+} as const
 
-export const userRoleAtom = atom(null);
+export type UserRoleType = (typeof UserRoleType)[keyof typeof UserRoleType]
+export const userRoleAtom = atom<UserRoleType | null>(null)

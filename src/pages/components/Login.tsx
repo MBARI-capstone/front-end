@@ -3,8 +3,12 @@ import { useState, FormEvent } from 'react'
 import SignInbutton from './SignInbutton'
 import { useRouter } from 'next/router'
 import { useSetAtom } from 'jotai'
-import { userRoleAtom } from './store'
+import { UserRoleType, userRoleAtom } from './store'
 
+interface Response {
+  username: string
+  role: string
+}
 interface ErrorResponse {
   error: string
 }
@@ -37,10 +41,11 @@ const Login = () => {
         throw new Error(errorData.error || 'Login failed')
       }
 
-      const data = await response.json()
+      const data: Response = await response.json()
 
-      console.log('Login successful', data)
-      setUserRole(data.userRole)
+      console.log(data)
+      console.log('Login successful', data.role)
+      setUserRole(data.role as UserRoleType)
 
       router.push('PageSelect')
     } catch (error) {
