@@ -1,9 +1,71 @@
-import React from "react";
+import { useState, useEffect } from "react";
 
 import Navbar from "../components/Navbar";
 import BackButton from "../components/BackButton";
 
-const preCruiseForm = () => {
+interface Ship {
+  shipId: number;
+  shipName: string;
+  shipDescription?: string;
+}
+
+interface User {
+  userId: number;
+  firstName: string;
+  lastName: string;
+}
+
+interface PreCruiseFormProps {
+  ships: Ship[];
+  users: User[];
+  error?: string;
+}
+
+export async function getServerSideProps() {
+  // Fetch your ships data here
+  try {
+    const shipsRes = await fetch('http://localhost:8080/api/v1.1/data/allShips');
+    const ships = await shipsRes.json();
+    console.log(ships);
+
+    const registeredUsersRes = await fetch('http://localhost:8080/api/v1.1/data/allRegisteredUsers');
+    const users = await registeredUsersRes.json();
+    console.log(users); 
+
+    return {
+      props: {
+        ships,
+        users,
+      },
+    };
+  } catch (error) {
+    // In case of an error, you can return an error prop, or you can choose to handle it differently
+    return { props: { error: error.message } };
+  }
+}
+  
+
+const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) => {
+
+   // State to store the selected ship ID
+   const [selectedShipId, setSelectedShipId] = useState<number | undefined>();
+   const [selectedUserId, setSelectedUserId] = useState<number | undefined>();
+
+   const handleShipChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const shipId = parseInt(event.target.value, 10);
+    setSelectedShipId(shipId);
+
+   };
+
+   const handleUserChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const userId = parseInt(event.target.value, 10);
+    setSelectedUserId(userId);
+   };
+
+   if (error) {
+    return <div>Error fetching ships: {error}</div>;
+  }
+
   return (
     <div className="h-screen  overflow-y-auto ">
       <Navbar currentPage="precruise" className="sticky top-0 z-10" />
@@ -26,13 +88,18 @@ const preCruiseForm = () => {
                   Ship Name:
                   <select
                     id="shipName"
+                    name="shipName"
+                    onChange={handleShipChange}
+                    value={selectedShipId || ''}
                     className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                     required
                   >
-                    <option value="">(Select One)</option>
-                    <option value="1">Ship 1</option>
-                    <option value="2">Ship 2</option>
-                    <option value="3">Ship 3</option>
+                  <option value="">(Select a Ship)</option>
+                    {ships.map((ship) => (
+                  <option key={ship.shipId} value={ship.shipId}>
+                    {ship.shipName}
+                  </option>
+                     ))}
                   </select>
                 </label>
                 <br />
@@ -44,13 +111,18 @@ const preCruiseForm = () => {
                   Chief Scientist:
                   <select
                     id="chiefScientist"
+                    name="chiefScientist"
+                    onChange={handleUserChange}
+                    value={selectedUserId || ''}
                     className="block appearance-none w-full bg-white border border-gray-400  hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                     required
                   >
-                    <option value="">(Select One)</option>
-                    <option value="1">Scientist 1</option>
-                    <option value="2">Scientist 2</option>
-                    <option value="3">Scientist 3</option>
+                    <option value="">(Select Chief Scientist)</option>
+                    {users.map((user) => (
+                      <option  key={user.userId} value={user.userId}>
+                         {`${user.firstName}`}
+                      </option>
+                    ))}
                   </select>
                 </label>
                 <br />
@@ -61,13 +133,18 @@ const preCruiseForm = () => {
                   Principal Investigator:
                   <select
                     id="principalInvestigator"
+                    name="principleInvestigator"
+                    onChange={handleUserChange}
+                    value={selectedUserId || ''}
                     className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                     required
                   >
-                    <option value="">(Select One)</option>
-                    <option value="1">Investigator 1</option>
-                    <option value="2">Investigator 2</option>
-                    <option value="3">Investigator 3</option>
+                    <option value="">(Select Principal Investigator)</option>
+                    {users.map((user) => (
+                      <option  key={user.userId} value={user.userId}>
+                         {`${user.firstName}`}
+                      </option>
+                    ))}
                   </select>
                 </label>
               </div>
@@ -205,4 +282,4 @@ const preCruiseForm = () => {
   );
 };
 
-export default preCruiseForm;
+export default PreCruiseForm;

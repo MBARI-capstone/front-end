@@ -1,5 +1,7 @@
+import React, { useState, useEffect, useContext } from 'react';
 import Statement from '../components/Statement'
 import Navigation from '../components/Navigation'
+import UserContext from '@/context/UserContext';
 import Link from 'next/link'
 import {
   Database,
@@ -7,22 +9,29 @@ import {
   Postcruise,
   Precruise,
   ReportsSearch,
+  DiveSearch,
 } from '../components/Page'
 
-export default function PageSelect() {
+
+export default function PageSelect({ userRole}) {
+ 
+
   // TODO: depends on user
   function List() {
-    return (
-      
-      <div className="mt-16 grid space-y-4">
-        <UserComponent />
-        {/* {user.role === 'user' && <UserComponent />}
-      {user.role === 'employee' && <EmployeeComponent />}
-      {user.role === 'coordinator' && <CoordinatorComponent />}
-      {user.role === 'admin' && <AdminComponent />} */}
-      </div>
-      
-    )
+    switch (userRole) {
+      case 'user':
+        return <UserComponent />;
+      case 'employee':
+        return <EmployeeComponent />;
+      case 'coordinator':
+        return <CoordinatorComponent />;
+      case 'admin':
+        return <AdminComponent />;
+      default:
+        //Need JWT cookies to have this work
+        // return <div>Access Denied</div>; // Or redirect to a login page
+        return <UserComponent />
+    }
   }
   
   function UserComponent() {
@@ -31,6 +40,7 @@ export default function PageSelect() {
       <div className="flex flex-col items-center space-y-4">
         <Precruise />
         <Postcruise />
+        <DiveSearch />
         {/* <button onClick="window.location.href='';">Add Dives</button> */}
         <ReportsSearch />
         <Logout />
@@ -86,5 +96,20 @@ export default function PageSelect() {
       <List />
       <Statement />
     </Navigation>
-  )
+  );
 }
+
+// export async function getServerSideProps(context) {
+//   // Fetch data from external API
+//   // Replace '/api/user-role' with your actual API endpoint that requires authentication
+//   const response = await fetch(`${process.env.API_URL}/api/user-role`, {
+//     headers: {
+//       // Include any necessary headers, like authentication tokens
+//       'Authorization': `Bearer ${context.req.cookies.token}`,
+//     },
+//   });
+//   const data = await response.json();
+
+//   // Pass user role to the page via props
+//   return { props: { userRole: data.role } };
+// }

@@ -1,32 +1,61 @@
-import Link from "next/link";
-import React, { useState } from "react";
+
+import { useState, FormEvent, useContext } from 'react';
 import SignInbutton from "./SignInbutton";
+import { useRouter } from 'next/router';
+import UserContext from "@/context/UserContext";
 
-const Login = ({ href }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+interface LoginResponse {
+  // Define the shape of your login response here
+  accessToken: string;
+  tokenType: string;
+}
+interface ErrorResponse {
+  error: string;
+}
 
-  const checkValidUser = () => {
-    //Simulated validation Logic
-    const validUsers = [
-      { username: "mbariemployee", password: "pass1" },
-      { username: "registerduser", password: "pass2" },
-      { username: "logcordinator", password: "pass3" },
-      { username: "admin", password: "pass4" },
-    ];
+const Login = () => {
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+  const { setUserRole } = useContext(UserContext); 
+  const router = useRouter(); // Using Next.js router for redirection
 
-    const isValid = validUsers.some(
-      (user) => user.username === username && user.password === password
-    );
+  const handleLogin = async (event: FormEvent) => {
+    event.preventDefault();
 
-    if (isValid) {
-      console.log("Valid user!");
-      // Handle success (e.g., navigate to another page)
-    } else {
-      console.log("Invalid user!");
-      // Handle failure (e.g., show an error message)
+    try {
+      const response = await fetch('http://localhost:8080/api/v1.1/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+
+      const data: LoginResponse | ErrorResponse = await response.json();
+
+      if (!response.ok) {
+        throw new Error((data as ErrorResponse).error || 'Login failed');
+      }
+
+      // if (data as )
+      console.log('Login successful', data.accessToken);
+      // cookie.add(data.tokenType + " " + data.accessToken);
+      router.push('PageSelect'); 
+    } catch (error: unknown) {
+      console.error('Login error:', error);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unexpected error occurred');
+      }
     }
   };
+
   return (
     <>
       
@@ -72,11 +101,14 @@ const Login = ({ href }) => {
               </div>
             </div>
             <div className="flex items-center justify-center h-full  ">
-              {/* <SignInbutton onSignIn={() => checkValidUser} /> */}
-              {/* <button onClick={() => router.push('/pageSelect')}>login</button> */}
-              <div className="flex items-center justify-center h-12 px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
-                <Link href={href}>Login</Link>
-              </div>
+            {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+        <button 
+          type="submit"
+          onClick={handleLogin}
+          className="flex items-center justify-center h-12 px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100"
+        >
+          Login
+        </button>
             </div>
           </form>
         </div>
