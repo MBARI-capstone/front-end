@@ -14,6 +14,7 @@ const Login = () => {
   const [password, setPassword] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
   const router = useRouter() // Using Next.js router for redirection
+  const setUserRole = useSetAtom(userRoleAtom)
 
   const handleLogin = async (event: FormEvent) => {
     event.preventDefault()
@@ -39,7 +40,6 @@ const Login = () => {
       const data = await response.json()
 
       console.log('Login successful', data)
-      const setUserRole = useSetAtom(userRoleAtom)
       setUserRole(data.userRole)
 
       router.push('PageSelect')

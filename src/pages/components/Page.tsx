@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Button from "./button";
+import LogOutButton from "./LogOutButton"; 
+
 
 export const Precruise = () => {
   return (
@@ -31,8 +33,10 @@ export const Database = () => {
   );
 };
 
+
+
 export const Logout = () => {
   return (
-    <Button hrefLink="/" buttonName="Logout"/>
+    <LogOutButton/>
   );
 };
