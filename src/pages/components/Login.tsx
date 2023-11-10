@@ -1,13 +1,15 @@
 
-import { useState, FormEvent, useContext } from 'react';
+import { useState, FormEvent} from 'react';
 import SignInbutton from "./SignInbutton";
 import { useRouter } from 'next/router';
-import UserContext from "@/context/UserContext";
+import { useAtom } from 'jotai';
+import { userRoleAtom } from './store';
 
 interface LoginResponse {
   // Define the shape of your login response here
   accessToken: string;
   tokenType: string;
+  userRole: string;
 }
 interface ErrorResponse {
   error: string;
@@ -17,8 +19,9 @@ const Login = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const { setUserRole } = useContext(UserContext); 
+  
   const router = useRouter(); // Using Next.js router for redirection
+  const [userRole, setUserRole] = useAtom(userRoleAtom); 
 
   const handleLogin = async (event: FormEvent) => {
     event.preventDefault();
@@ -45,6 +48,7 @@ const Login = () => {
       // if (data as )
       console.log('Login successful', data.accessToken);
       // cookie.add(data.tokenType + " " + data.accessToken);
+      setUserRole(data.userRole); 
       router.push('PageSelect'); 
     } catch (error: unknown) {
       console.error('Login error:', error);

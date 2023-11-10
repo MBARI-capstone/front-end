@@ -14,6 +14,9 @@ const nextConfig = {
         }
     ]
 },
+experimental: {
+  swcPlugins: [['@swc-jotai/react-refresh', {}]],
+},
   reactStrictMode: true,
 }
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Statement from '../components/Statement'
 import Navigation from '../components/Navigation'
-import UserContext from '@/context/UserContext';
-import Link from 'next/link'
+
+import { userRoleAtom } from '../components/store';
 import {
   Database,
   Logout,
@@ -11,10 +11,14 @@ import {
   ReportsSearch,
   DiveSearch,
 } from '../components/Page'
+import { useAtom } from 'jotai/react';
+
+type UserRoleType = 'user' | 'employee' | 'coordinator' | 'admin' | null;
 
 
-export default function PageSelect({ userRole}) {
- 
+
+export default function PageSelect() {
+  const [userRole] = useAtom(userRoleAtom) as unknown as [UserRoleType];
 
   // TODO: depends on user
   function List() {
@@ -27,6 +31,9 @@ export default function PageSelect({ userRole}) {
         return <CoordinatorComponent />;
       case 'admin':
         return <AdminComponent />;
+        case null:
+          console.log("UserRole is null");
+          return null;
       default:
         //Need JWT cookies to have this work
         // return <div>Access Denied</div>; // Or redirect to a login page
