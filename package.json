@@ -12,11 +12,13 @@
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "cors": "^2.8.5",
+    "jotai": "^2.5.1",
     "next": "^14.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@swc-jotai/react-refresh": "^0.1.0",
     "@types/node": "20.8.9",
     "@types/react": "^18",
     "@types/react-dom": "^18",
