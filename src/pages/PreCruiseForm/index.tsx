@@ -27,9 +27,11 @@ export async function getServerSideProps() {
     const shipsRes = await fetch('http://localhost:8080/api/v1.1/data/allShips');
     const ships = await shipsRes.json();
     console.log(ships);
+
     const registeredUsersRes = await fetch('http://localhost:8080/api/v1.1/data/allRegisteredUsers');
     const users = await registeredUsersRes.json();
     console.log(users); 
+
     return {
       props: {
         ships,
@@ -131,13 +133,18 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                   Principal Investigator:
                   <select
                     id="principalInvestigator"
+                    name="principleInvestigator"
+                    onChange={handleUserChange}
+                    value={selectedUserId || ''}
                     className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                     required
                   >
-                    <option value="">(Select One)</option>
-                    <option value="1">Investigator 1</option>
-                    <option value="2">Investigator 2</option>
-                    <option value="3">Investigator 3</option>
+                    <option value="">(Select Principal Investigator)</option>
+                    {users.map((user) => (
+                      <option  key={user.userId} value={user.userId}>
+                         {`${user.firstName}`}
+                      </option>
+                    ))}
                   </select>
                 </label>
               </div>
