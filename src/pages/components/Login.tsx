@@ -1,7 +1,8 @@
-import Link from "next/link";
-import { useState, FormEvent } from 'react';
+
+import { useState, FormEvent, useContext } from 'react';
 import SignInbutton from "./SignInbutton";
 import { useRouter } from 'next/router';
+import UserContext from "@/context/UserContext";
 
 interface LoginResponse {
   // Define the shape of your login response here
@@ -16,6 +17,7 @@ const Login = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const { setUserRole } = useContext(UserContext); 
   const router = useRouter(); // Using Next.js router for redirection
 
   const handleLogin = async (event: FormEvent) => {
@@ -44,7 +46,7 @@ const Login = () => {
       console.log('Login successful', data.accessToken);
       // cookie.add(data.tokenType + " " + data.accessToken);
       router.push('PageSelect'); 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
       if (error instanceof Error) {
         setError(error.message);

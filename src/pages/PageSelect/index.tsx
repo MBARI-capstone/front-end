@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Statement from '../components/Statement'
 import Navigation from '../components/Navigation'
+import UserContext from '@/context/UserContext';
 import Link from 'next/link'
 import {
   Database,
@@ -12,9 +13,8 @@ import {
 } from '../components/Page'
 
 
-export default function PageSelect({ userRole }) {
+export default function PageSelect({ userRole}) {
  
-
 
   // TODO: depends on user
   function List() {
@@ -99,17 +99,17 @@ export default function PageSelect({ userRole }) {
   );
 }
 
-export async function getServerSideProps(context) {
-  // Fetch data from external API
-  // Replace '/api/user-role' with your actual API endpoint that requires authentication
-  const response = await fetch(`${process.env.API_URL}/api/user-role`, {
-    headers: {
-      // Include any necessary headers, like authentication tokens
-      'Authorization': `Bearer ${context.req.cookies.token}`,
-    },
-  });
-  const data = await response.json();
+// export async function getServerSideProps(context) {
+//   // Fetch data from external API
+//   // Replace '/api/user-role' with your actual API endpoint that requires authentication
+//   const response = await fetch(`${process.env.API_URL}/api/user-role`, {
+//     headers: {
+//       // Include any necessary headers, like authentication tokens
+//       'Authorization': `Bearer ${context.req.cookies.token}`,
+//     },
+//   });
+//   const data = await response.json();
 
-  // Pass user role to the page via props
-  return { props: { userRole: data.role } };
-}
+//   // Pass user role to the page via props
+//   return { props: { userRole: data.role } };
+// }
