@@ -32,6 +32,7 @@ function ShipSelector({ onShipSelected }) {
     fetchShips();
   }, []);
 
+
   if (isLoading) return <p>Loading...</p>;
 
   return (
@@ -165,7 +166,7 @@ const ReportsSearch = () => {
                       <select
                         id="chiefScientist"
                         className="block appearance-none w-full bg-white border border-gray-400  hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                        required
+                        
                       >
                         <option value="">(Select One)</option>
                         <option value="1">Scientist 1</option>
@@ -182,7 +183,7 @@ const ReportsSearch = () => {
                       <select
                         id="principalInvestigator"
                         className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                        required
+                        
                       >
                         <option value="">(Select One)</option>
                         <option value="1">Investigator 1</option>
@@ -246,7 +247,7 @@ const ReportsSearch = () => {
                           <select
                             id="status"
                             className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            required
+                            
                           >
                             <option value="">(Select One)</option>
                             <option value="1">Complete</option>
@@ -280,7 +281,7 @@ const ReportsSearch = () => {
                           <select
                             id="status"
                             className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            required
+                            
                           >
                             <option value="">(Select One)</option>
                             <option value="1">Complete</option>
@@ -299,7 +300,7 @@ const ReportsSearch = () => {
                       <select
                         id="chiefScientist"
                         className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                        required
+                        
                       >
                         <option value="">(Select One)</option>
                         <option value="1">Scientist 1</option>
@@ -374,11 +375,7 @@ const ReportsSearch = () => {
               {/* This creates a flexible space */}
               <BackButton hrefLink="/PageSelect" buttonName="Back" />
               <div className="flex-1"></div>{" "}
-              <input
-                type="submit"
-                className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
-                value="Search"
-              />
+              <button onClick={executeSearch}>Search</button>
             </div>
             </form>
           </div>
