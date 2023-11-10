@@ -1,68 +1,58 @@
+import Link from 'next/link'
+import { useState, FormEvent } from 'react'
+import SignInbutton from './SignInbutton'
+import { useRouter } from 'next/router'
+import { useSetAtom } from 'jotai'
+import { userRoleAtom } from './store'
 
-import { useState, FormEvent} from 'react';
-import SignInbutton from "./SignInbutton";
-import { useRouter } from 'next/router';
-import { useAtom } from 'jotai';
-import { userRoleAtom } from './store';
-
-interface LoginResponse {
-  // Define the shape of your login response here
-  accessToken: string;
-  tokenType: string;
-  userRole: string;
-}
 interface ErrorResponse {
-  error: string;
+  error: string
 }
 
 const Login = () => {
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
-  
-  const router = useRouter(); // Using Next.js router for redirection
-  const [userRole, setUserRole] = useAtom(userRoleAtom); 
+  const [username, setUsername] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [error, setError] = useState<string | null>(null)
+  const router = useRouter() // Using Next.js router for redirection
 
   const handleLogin = async (event: FormEvent) => {
-    event.preventDefault();
+    event.preventDefault()
 
     try {
-      const response = await fetch('http://localhost:8080/api/v1.1/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-      });
-
-      const data: LoginResponse | ErrorResponse = await response.json();
+      const response = await fetch(
+        'http://localhost:8080/api/v1.1/auth/login',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password }),
+          credentials: 'include',
+        }
+      )
 
       if (!response.ok) {
-        throw new Error((data as ErrorResponse).error || 'Login failed');
+        const errorData: ErrorResponse = await response.json()
+        throw new Error(errorData.error || 'Login failed')
       }
 
-      // if (data as )
-      console.log('Login successful', data.accessToken);
-      // cookie.add(data.tokenType + " " + data.accessToken);
-      setUserRole(data.userRole); 
-      router.push('PageSelect'); 
-    } catch (error: unknown) {
-      console.error('Login error:', error);
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError('An unexpected error occurred');
-      }
+      const data = await response.json()
+
+      console.log('Login successful', data)
+      const setUserRole = useSetAtom(userRoleAtom)
+      setUserRole(data.userRole)
+
+      router.push('PageSelect')
+    } catch (error) {
+      console.error('Login error:', error)
+      setError(
+        error instanceof Error ? error.message : 'An unexpected error occurred'
+      )
     }
-  };
+  }
 
   return (
     <>
-      
       <div className="flex min-h-md flex-1 flex-col justify-center px-6 py-1 lg:px-8 ">
         <div>
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight  text-cyan-900">
@@ -105,20 +95,20 @@ const Login = () => {
               </div>
             </div>
             <div className="flex items-center justify-center h-full  ">
-            {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
-        <button 
-          type="submit"
-          onClick={handleLogin}
-          className="flex items-center justify-center h-12 px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100"
-        >
-          Login
-        </button>
+              {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+              <button
+                type="submit"
+                onClick={handleLogin}
+                className="flex items-center justify-center h-12 px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100"
+              >
+                Login
+              </button>
             </div>
           </form>
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

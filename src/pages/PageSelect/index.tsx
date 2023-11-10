@@ -11,35 +11,35 @@ import {
   ReportsSearch,
   DiveSearch,
 } from '../components/Page'
-import { useAtom } from 'jotai/react';
+import { useAtomValue } from 'jotai/react';
 
 type UserRoleType = 'user' | 'employee' | 'coordinator' | 'admin' | null;
 
 
 
 export default function PageSelect() {
-  const [userRole] = useAtom(userRoleAtom) as unknown as [UserRoleType];
-
+  const userRole = useAtomValue(userRoleAtom);
+  console.log(userRole)
   // TODO: depends on user
-  function List() {
-    switch (userRole) {
-      case 'user':
-        return <UserComponent />;
-      case 'employee':
-        return <EmployeeComponent />;
-      case 'coordinator':
-        return <CoordinatorComponent />;
-      case 'admin':
-        return <AdminComponent />;
-        case null:
-          console.log("UserRole is null");
-          return null;
-      default:
-        //Need JWT cookies to have this work
-        // return <div>Access Denied</div>; // Or redirect to a login page
-        return <UserComponent />
-    }
-  }
+  // function List() {
+  //   switch (userRole) {
+  //     case 'user':
+  //       return <UserComponent />;
+  //     case 'employee':
+  //       return <EmployeeComponent />;
+  //     case 'coordinator':
+  //       return <CoordinatorComponent />;
+  //     case 'admin':
+  //       return <AdminComponent />;
+  //       case null:
+  //         console.log("UserRole is null");
+  //         return null;
+  //     default:
+  //       //Need JWT cookies to have this work
+  //       // return <div>Access Denied</div>; // Or redirect to a login page
+  //       return <UserComponent />
+  //   }
+  // }
   
   function UserComponent() {
     return (
@@ -100,23 +100,10 @@ export default function PageSelect() {
   }
   return (
     <Navigation>
-      <List />
+      {/* <List /> */}
       <Statement />
     </Navigation>
   );
 }
 
-// export async function getServerSideProps(context) {
-//   // Fetch data from external API
-//   // Replace '/api/user-role' with your actual API endpoint that requires authentication
-//   const response = await fetch(`${process.env.API_URL}/api/user-role`, {
-//     headers: {
-//       // Include any necessary headers, like authentication tokens
-//       'Authorization': `Bearer ${context.req.cookies.token}`,
-//     },
-//   });
-//   const data = await response.json();
 
-//   // Pass user role to the page via props
-//   return { props: { userRole: data.role } };
-// }
