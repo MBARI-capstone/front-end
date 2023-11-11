@@ -9,3 +9,8 @@ export const UserRoleType = {
 
 export type UserRoleType = (typeof UserRoleType)[keyof typeof UserRoleType]
 export const userRoleAtom = atom<UserRoleType | null>(null)
+
+export type Ship = {
+  shipId: number
+  shipName: string
+}
