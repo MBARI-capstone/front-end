@@ -11,7 +11,6 @@ import {
   ReportsSearch,
   DiveSearch,
 } from '../components/Page'
-import { useSetAtom } from 'jotai/react'
 import { fetchUserRole } from '../api/hooks/fetchUserRole'
 import { GetServerSideProps } from 'next'
 
@@ -20,11 +19,6 @@ interface PageSelectProps {
 }
 
 export default function PageSelect({ userRole }: PageSelectProps) {
-  const setUserRole = useSetAtom(userRoleAtom)
-  useEffect(() => {
-    setUserRole(userRole)
-  }, [userRole, setUserRole])
-
   console.log(userRole)
   // TODO: depends on user
   function List() {
