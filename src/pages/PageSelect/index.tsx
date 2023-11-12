@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useEffect } from 'react'
 import Statement from '../components/Statement'
 import Navigation from '../components/Navigation'
 
@@ -11,10 +11,20 @@ import {
   ReportsSearch,
   DiveSearch,
 } from '../components/Page'
-import { useAtomValue } from 'jotai/react'
+import { useSetAtom } from 'jotai/react'
+import { fetchUserRole } from '../api/hooks/fetchUserRole'
+import { GetServerSideProps } from 'next'
 
-export default function PageSelect() {
-  const userRole = useAtomValue(userRoleAtom) as UserRoleType
+interface PageSelectProps {
+  userRole: UserRoleType
+}
+
+export default function PageSelect({ userRole }: PageSelectProps) {
+  const setUserRole = useSetAtom(userRoleAtom)
+  useEffect(() => {
+    setUserRole(userRole)
+  }, [userRole, setUserRole])
+
   console.log(userRole)
   // TODO: depends on user
   function List() {
@@ -99,4 +109,14 @@ export default function PageSelect() {
       <Statement />
     </Navigation>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const userRole = await fetchUserRole(context)
+  console.log(userRole)
+  return {
+    props: {
+      userRole,
+    },
+  }
 }
