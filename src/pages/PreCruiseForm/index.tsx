@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import { GetServerSideProps } from 'next'
 
 import Navbar from "../components/Navbar";
@@ -85,13 +85,13 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
   const [regionDescription, setRegionDescription] = useState('');
   const [plannedTrackDescription, setPlannedTrackDescription] = useState('');
 
-  const handlePurposeChange = (e) => setPurpose(e.target.value);
-  const handleScheduledStartDateChange = (e) => setScheduledStartDate(e.target.value);
-  const handleScheduledEndDateChange = (e) => setScheduledEndDate(e.target.value);
-  const handleEquipmentDescriptionChange = (e) => setEquipmentDescription(e.target.value);
-  const handleParticipantsChange = (e) => setParticipants(e.target.value);
-  const handleRegionDescriptionChange = (e) => setRegionDescription(e.target.value);
-  const handlePlannedTrackDescriptionChange = (e) => setPlannedTrackDescription(e.target.value);
+  const handlePurposeChange = (e: { target: { value: SetStateAction<string>; }; }) => setPurpose(e.target.value);
+  const handleScheduledStartDateChange = (e: { target: { value: SetStateAction<string>; }; }) => setScheduledStartDate(e.target.value);
+  const handleScheduledEndDateChange = (e: { target: { value: SetStateAction<string>; }; }) => setScheduledEndDate(e.target.value);
+  const handleEquipmentDescriptionChange = (e: { target: { value: SetStateAction<string>; }; }) => setEquipmentDescription(e.target.value);
+  const handleParticipantsChange = (e: { target: { value: SetStateAction<string>; }; }) => setParticipants(e.target.value);
+  const handleRegionDescriptionChange = (e: { target: { value: SetStateAction<string>; }; }) => setRegionDescription(e.target.value);
+  const handlePlannedTrackDescriptionChange = (e: { target: { value: SetStateAction<string>; }; }) => setPlannedTrackDescription(e.target.value);
 
    const handleShipChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const shipId = parseInt(event.target.value, 10);
@@ -109,7 +109,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
     setPrincipleId(userId);
    };
 
-   const handleSubmit = async (event) => {
+   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
     const preExpeditionData = {
       shipId: selectedShipId,
@@ -137,22 +137,18 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      const clonedResponse = response.clone();
+    
 
       let result;
+      
+    
       try {
-        result = await response.json();
+        result = await response.json();  // First attempt to read as JSON
       } catch (jsonError) {
         console.error('Response is not valid JSON:', jsonError);
-        // Read the cloned response as text
-        const textResult = await clonedResponse.text();
-        console.error('Response as text:', textResult);
-        // Handle the non-JSON response (e.g., error message) here
-        throw new Error('Response is not in JSON format.');
       }
     
-      setSubmissionStatus({ status: 'success', message: result.message || 'Form submitted successfully!' });
-    
+
     } catch (error) {
       console.error('Error posting data:', error);
       setSubmissionStatus({ status: 'error', message: error.message || 'Failed to submit the form.' });
