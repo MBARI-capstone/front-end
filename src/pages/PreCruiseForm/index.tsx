@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { GetServerSideProps } from 'next'
 
 import Navbar from "../components/Navbar";
 import BackButton from "../components/BackButton";
@@ -21,14 +22,37 @@ interface PreCruiseFormProps {
   error?: string;
 }
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   // Fetch your ships data here
   try {
-    const shipsRes = await fetch('http://localhost:8080/api/v1.1/data/allShips');
+    const shipsRes = await fetch('http://localhost:8080/api/v1.1/data/allShips',
+      {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: context.req.headers.cookie || '',
+        },
+      }
+    )
+    
+    if (!shipsRes.ok) {
+      throw new Error(`Error: ${shipsRes.status}`);
+    }
     const ships = await shipsRes.json();
     console.log(ships);
 
-    const registeredUsersRes = await fetch('http://localhost:8080/api/v1.1/data/allRegisteredUsers');
+    const registeredUsersRes = await fetch('http://localhost:8080/api/v1.1/data/allUsers',
+    {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: context.req.headers.cookie || '',
+      },
+    }
+    );
+    if (!registeredUsersRes.ok) {
+      throw new Error(`Error: ${registeredUsersRes.status}`);
+    }
     const users = await registeredUsersRes.json();
     console.log(users); 
 

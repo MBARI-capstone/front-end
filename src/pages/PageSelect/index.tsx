@@ -59,7 +59,7 @@ export default function PageSelect({ userRole }: PageSelectProps) {
   }
   function EmployeeComponent() {
     return (
-      <div>
+      <div className="flex flex-col items-center space-y-4">
         {/* <button onClick="window.location.href='';">Add Dives</button */}
         <ReportsSearch />
         <Logout />
@@ -72,7 +72,7 @@ export default function PageSelect({ userRole }: PageSelectProps) {
   }
   function CoordinatorComponent() {
     return (
-      <div>
+      <div className="flex flex-col items-center space-y-4">
         <Precruise />
         <Postcruise />
         {/* <button onClick="window.location.href='';">Add Dives</button> */}
@@ -87,7 +87,7 @@ export default function PageSelect({ userRole }: PageSelectProps) {
   }
   function AdminComponent() {
     return (
-      <div>
+      <div className="flex flex-col items-center space-y-4">
         <Precruise />
         <Postcruise />
         {/* <button onClick="window.location.href='';">Add Dives</button> */}
