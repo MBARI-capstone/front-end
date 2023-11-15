@@ -144,6 +144,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
     
       try {
         result = await response.json();  // First attempt to read as JSON
+        setSubmissionStatus({ status: 'success', message: 'Form submitted successfully.' });
       } catch (jsonError) {
         console.error('Response is not valid JSON:', jsonError);
       }
