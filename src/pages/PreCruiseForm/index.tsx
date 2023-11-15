@@ -3,6 +3,8 @@ import { GetServerSideProps } from 'next'
 
 import Navbar from "../components/Navbar";
 import BackButton from "../components/BackButton";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Ship {
   shipId: number;
@@ -93,6 +95,19 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
   const handleRegionDescriptionChange = (e: { target: { value: SetStateAction<string>; }; }) => setRegionDescription(e.target.value);
   const handlePlannedTrackDescriptionChange = (e: { target: { value: SetStateAction<string>; }; }) => setPlannedTrackDescription(e.target.value);
 
+  const resetForm = () => {
+    setSelectedShipId(undefined);
+    setSelectedUserId(undefined);
+    setPrincipleId(undefined);
+    setPurpose('');
+    setScheduledStartDate('');
+    setScheduledEndDate('');
+    setEquipmentDescription('');
+    setParticipants('');
+    setRegionDescription('');
+    setPlannedTrackDescription('');
+  };
+
    const handleShipChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const shipId = parseInt(event.target.value, 10);
     setSelectedShipId(shipId);
@@ -134,27 +149,19 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
         body: JSON.stringify(preExpeditionData),
       });
   
-      if (!response.ok) {
+      if (response.ok) {
+        // Call the reset function here upon successful submission
+        resetForm();
+        setSubmissionStatus({ status: 'success', message: 'Form submitted successfully.' });
+        toast.success('Form submitted successfully.');
+      } else {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-    
-
-      let result;
-      
-    
-      try {
-        result = await response.json();  // First attempt to read as JSON
-         setSubmissionStatus({ status: 'success', message: 'Form submitted successfully.' });
-      } catch (jsonError) {
-        console.error('Response is not valid JSON:', jsonError);
-      }
-    
-
     } catch (error) {
       console.error('Error posting data:', error);
       setSubmissionStatus({ status: 'error', message: error.message || 'Failed to submit the form.' });
+      toast.error('Failed to submit the form.');
     }
-  
   };
 
    
@@ -173,6 +180,9 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
           {submissionStatus.message}
         </div>
       )}
+      <ToastContainer
+      position="top-center"
+       />
 
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl">
           <h1 className="mb-2 text-2xl text-center text-cyan-900 font-bold">
