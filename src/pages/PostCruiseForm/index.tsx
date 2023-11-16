@@ -76,7 +76,7 @@ const PostCruiseForm: React.FC<PostCruiseFormProps> = ({ currentUser }) => {
   const [operatorComments, setoperatorComments] = useState('');
   const [allEquipmentFunctioned, setallEquipmentFunctioned] = useState<boolean>(false);
   const [otherComments, setotherComments] = useState('');
-  const [updatedBy, setUpdatedBy] = useState('');
+  const [updatedBy, setUpdatedBy] = useState<number>(1);
 
   const handleActualStartDate = (e: { target: { value: SetStateAction<string>; }; }) => setactualStartDate(e.target.value);
   const handleActualEndDate = (e: { target: { value: SetStateAction<string>; }; }) => setactualEndDate(e.target.value);
@@ -88,9 +88,10 @@ const PostCruiseForm: React.FC<PostCruiseFormProps> = ({ currentUser }) => {
   const handleOtherComments = (e: { target: { value: SetStateAction<string>; }; }) => setotherComments(e.target.value);
 
 
+
   useEffect(() => {
     if(currentUser && currentUser.userId) {
-      setUpdatedBy(currentUser.userId.toString());
+      setUpdatedBy(currentUser.userId);
     }
   }, [currentUser]);
 
@@ -117,9 +118,10 @@ const PostCruiseForm: React.FC<PostCruiseFormProps> = ({ currentUser }) => {
       operatorComments,
       allEquipmentFunctioned,
       otherComments,
-      updatedBy
+      updatedBy: 1
+      
     };
-
+      
     try {
       const response = await fetch('http://localhost:8080/api/v1.1/postExpedition', {
         credentials: 'include',
