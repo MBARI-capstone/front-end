@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect } from 'react'
 import Statement from '../components/Statement'
 import Navigation from '../components/Navigation'
 
-import { userRoleAtom } from '../components/store';
+import { UserRoleType, userRoleAtom } from '../components/store'
 import {
   Database,
   Logout,
@@ -11,39 +11,38 @@ import {
   ReportsSearch,
   DiveSearch,
 } from '../components/Page'
-import { useAtom } from 'jotai/react';
+import { fetchUserRole } from '../api/hooks/fetchUserRole'
+import { GetServerSideProps } from 'next'
 
-type UserRoleType = 'user' | 'employee' | 'coordinator' | 'admin' | null;
+interface PageSelectProps {
+  userRole: UserRoleType
+}
 
-
-
-export default function PageSelect() {
-  const [userRole] = useAtom(userRoleAtom) as unknown as [UserRoleType];
-
+export default function PageSelect({ userRole }: PageSelectProps) {
+  console.log(userRole)
   // TODO: depends on user
   function List() {
     switch (userRole) {
-      case 'user':
-        return <UserComponent />;
-      case 'employee':
-        return <EmployeeComponent />;
-      case 'coordinator':
-        return <CoordinatorComponent />;
-      case 'admin':
-        return <AdminComponent />;
-        case null:
-          console.log("UserRole is null");
-          return null;
+      case UserRoleType.REGISTERED_USER:
+        return <UserComponent />
+      case UserRoleType.MBARI_EMPLOYEE:
+        return <EmployeeComponent />
+      case UserRoleType.LOGISTICS_COORDINATOR:
+        return <CoordinatorComponent />
+      case UserRoleType.ADMIN:
+        return <AdminComponent />
+      case null:
+        console.log('UserRole is null')
+        return null
       default:
         //Need JWT cookies to have this work
         // return <div>Access Denied</div>; // Or redirect to a login page
         return <UserComponent />
     }
   }
-  
+
   function UserComponent() {
     return (
-      
       <div className="flex flex-col items-center space-y-4">
         <Precruise />
         <Postcruise />
@@ -60,7 +59,7 @@ export default function PageSelect() {
   }
   function EmployeeComponent() {
     return (
-      <div>
+      <div className="flex flex-col items-center space-y-4">
         {/* <button onClick="window.location.href='';">Add Dives</button */}
         <ReportsSearch />
         <Logout />
@@ -73,7 +72,7 @@ export default function PageSelect() {
   }
   function CoordinatorComponent() {
     return (
-      <div>
+      <div className="flex flex-col items-center space-y-4">
         <Precruise />
         <Postcruise />
         {/* <button onClick="window.location.href='';">Add Dives</button> */}
@@ -88,7 +87,7 @@ export default function PageSelect() {
   }
   function AdminComponent() {
     return (
-      <div>
+      <div className="flex flex-col items-center space-y-4">
         <Precruise />
         <Postcruise />
         {/* <button onClick="window.location.href='';">Add Dives</button> */}
@@ -103,20 +102,15 @@ export default function PageSelect() {
       <List />
       <Statement />
     </Navigation>
-  );
+  )
 }
 
-// export async function getServerSideProps(context) {
-//   // Fetch data from external API
-//   // Replace '/api/user-role' with your actual API endpoint that requires authentication
-//   const response = await fetch(`${process.env.API_URL}/api/user-role`, {
-//     headers: {
-//       // Include any necessary headers, like authentication tokens
-//       'Authorization': `Bearer ${context.req.cookies.token}`,
-//     },
-//   });
-//   const data = await response.json();
-
-//   // Pass user role to the page via props
-//   return { props: { userRole: data.role } };
-// }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const userRole = await fetchUserRole(context)
+  console.log(userRole)
+  return {
+    props: {
+      userRole,
+    },
+  }
+}

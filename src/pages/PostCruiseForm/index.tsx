@@ -1,19 +1,170 @@
-import React from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import Navbar from "../components/Navbar";
 import Button from "../components/button";
 import BackButton from "../components/BackButton";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { GetServerSideProps } from "next";
 
-const postCruiseForm = () => {
+interface User {
+  userId: number;
+  firstName: string;
+  lastName: string;
+}
+
+
+
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  try{
+    const registeredUsersRes = await fetch('http://localhost:8080/api/v1.1/data/allUsers',
+    {
+      credentials: 'include', 
+      headers: {
+        'Content-type': 'application/json',
+        Cookie: context.req.headers.cookie || '',
+      },
+    });
+    if (!registeredUsersRes.ok) {
+      throw new Error(`Error: ${registeredUsersRes.status}`);
+    }
+    const users = await registeredUsersRes.json();
+    console.log(users); 
+
+    const currentUserRes = await fetch('http://localhost:8080/api/v1.1/data/allUsers', {
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+        Cookie: context.req.headers.cookie || '',
+      },
+    });
+
+    let currentUser = null;
+    if (currentUserRes.ok) {
+      currentUser = await currentUserRes.json();
+      console.log(currentUser);
+    }
+    return {
+      props: {
+        users,
+        currentUser
+      },
+    };
+  } catch (error) {
+    // In case of an error, you can return an error prop, or you can choose to handle it differently
+    return { props: { error: error.message } };
+  }
+}
+
+
+
+interface PostCruiseFormProps {
+  currentUser: User;
+  
+}
+
+
+const PostCruiseForm: React.FC<PostCruiseFormProps> = ({ currentUser }) => {
+
+  const [submissionStatus, setSubmissionStatus] = useState({ status: '', message: '' });
+  const [actualStartDate, setactualStartDate] = useState(''); 
+  const [actualEndDate, setactualEndDate] = useState('');
+  const [acomplishments, setAccomplishments] = useState('');
+  const [scientistComments, setScientistComments] = useState('');
+  const [sciObjectivesMet, setsciObjectivesMet] = useState<boolean>(false);
+  const [operatorComments, setoperatorComments] = useState('');
+  const [allEquipmentFunctioned, setallEquipmentFunctioned] = useState<boolean>(false);
+  const [otherComments, setotherComments] = useState('');
+  const [updatedBy, setUpdatedBy] = useState<number>(1);
+
+  const handleActualStartDate = (e: { target: { value: SetStateAction<string>; }; }) => setactualStartDate(e.target.value);
+  const handleActualEndDate = (e: { target: { value: SetStateAction<string>; }; }) => setactualEndDate(e.target.value);
+  const handleAccomplishments = (e: { target: { value: SetStateAction<string>; }; }) => setAccomplishments(e.target.value);
+  const handleScienceComments = (e: { target: { value: SetStateAction<string>; }; }) => setScientistComments(e.target.value);
+  const handleSciObjectives = (e: { target: { checked: boolean }; }) => setsciObjectivesMet(e.target.checked);
+  const handleOperatorComments = (e: { target: { value: SetStateAction<string>; }; }) => setoperatorComments(e.target.value);
+  const handleAllEquipmentFunctioned = (e: { target: { checked: boolean }; }) => setallEquipmentFunctioned(e.target.checked);
+  const handleOtherComments = (e: { target: { value: SetStateAction<string>; }; }) => setotherComments(e.target.value);
+
+
+
+  useEffect(() => {
+    if(currentUser && currentUser.userId) {
+      setUpdatedBy(currentUser.userId);
+    }
+  }, [currentUser]);
+
+
+  const resetForm = () => {
+    setactualStartDate('');
+    setactualEndDate('');
+    setAccomplishments('');
+    setScientistComments('');
+    setsciObjectivesMet(false);
+    setoperatorComments('');
+    setallEquipmentFunctioned(false);
+    setotherComments('');
+  };
+
+  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    event.preventDefault();
+    const postExpeditionData = {
+      actualStartDate,
+      actualEndDate,
+      acomplishments,
+      scientistComments,
+      sciObjectivesMet,
+      operatorComments,
+      allEquipmentFunctioned,
+      otherComments,
+      updatedBy: 1
+      
+    };
+      
+    try {
+      const response = await fetch('http://localhost:8080/api/v1.1/postExpedition', {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postExpeditionData),
+      });
+      if (response.ok) {
+        // Call the reset function here upon successful submission
+        resetForm();
+        setSubmissionStatus({ status: 'success', message: 'Form submitted successfully.' });
+        toast.success('Form submitted successfully.');
+      } else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (error: unknown) {
+      let errorMesage = 'Failed to submit form.';
+      if(error instanceof Error){
+        errorMesage = error.message;
+      }
+      console.error('Error posting data:', error);
+      setSubmissionStatus({ status: 'error', message: errorMesage });
+      toast.error('Failed to submit the form.');
+    }
+    };
+  
+
+
   return (
     <div className="h-screen overflow-y-auto">
       <Navbar currentPage="postcruise" className="sticky top-0 z-10" />
       <div className="bg-custom-blue flex flex-col items-center justify-center font-sans text-cyan-900 pt-24">
+      <ToastContainer
+      position="top-center"
+       />
         <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl">
           <h1 className="mb-2 text-2xl text-center text-cyan-900 font-bold">
             Post-Cruise Form
           </h1>
 
-          <form method="post">
+          <form onSubmit={handleSubmit}>
             <p className="mb-4 text-sm text-center italic">
               Please fill out all the information below in order to submit a
               request for a post cruise approval.
@@ -27,8 +178,10 @@ const postCruiseForm = () => {
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"></div>
                 <input
                   type="date"
-                  id="scheduledEndDatetime"
-                  name="scheduledEndDatetime"
+                  id="actualStartDate"
+                  name="actualStartDate"
+                  onChange={handleActualStartDate}
+                  value={actualStartDate || ''}
                   className=" shadow leading-tight focus:outline-none focus:shadow-outline border border-gray-300  text-cyan-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 "
                   required
                 ></input>
@@ -43,8 +196,10 @@ const postCruiseForm = () => {
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"></div>
                 <input
                   type="date"
-                  id="scheduledEndDatetime"
-                  name="scheduledEndDatetime"
+                  id="actualEndDatetime"
+                  name="actualEndDatetime"
+                  onChange={handleActualEndDate}
+                  value = {actualEndDate || ''}
                   className=" shadow leading-tight focus:outline-none focus:shadow-outline border border-gray-300  text-cyan-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   required
                 ></input>
@@ -58,6 +213,8 @@ const postCruiseForm = () => {
               <textarea
                 id="acomplishments"
                 name="acomplishments"
+                onChange={handleAccomplishments}
+                value = {acomplishments || ''}
                 className="w-full border max-h-[100px] rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="acomplishments (up to 8000 character text field)"
                 required
@@ -71,6 +228,8 @@ const postCruiseForm = () => {
               <textarea
                 id="scientistComments"
                 name="scientistComments"
+                onChange={handleScienceComments}
+                value = {scientistComments || ''}
                 className="w-full border max-h-[100px] rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="scientistComments (up to 8000 character text field)"
                 required
@@ -84,6 +243,8 @@ const postCruiseForm = () => {
               <input
                 type="checkbox"
                 id="sciObjectivesMet"
+                onChange={handleSciObjectives}
+                checked={ sciObjectivesMet}
                 name="sciObjectivesMet"
               ></input>
             </label>
@@ -95,6 +256,8 @@ const postCruiseForm = () => {
               <input
                 type="checkbox"
                 id="allEquipmentFunctioned"
+                onChange={handleAllEquipmentFunctioned}
+                checked={allEquipmentFunctioned}
                 name="allEquipmentFunctioned"
               ></input>
             </label>
@@ -106,6 +269,8 @@ const postCruiseForm = () => {
               <textarea
                 id="operatorComments"
                 name="operatorComments"
+                onChange={handleOperatorComments}
+                value={operatorComments || ''}
                 className="w-full border max-h-[100px] rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="operatorComments (up to 8000 character text field)"
                 required
@@ -120,6 +285,8 @@ const postCruiseForm = () => {
               <textarea
                 id="otherComments"
                 name="otherComments"
+                onChange={handleOtherComments}
+                value={otherComments || ''}
                 className="w-full border max-h-[100px] rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="otherComments (up to 8000 character text field)"
                 required
@@ -143,4 +310,4 @@ const postCruiseForm = () => {
   );
 };
 
-export default postCruiseForm;
+export default PostCruiseForm;

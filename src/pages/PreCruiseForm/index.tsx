@@ -1,7 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction } from "react";
+import { GetServerSideProps } from 'next'
 
 import Navbar from "../components/Navbar";
 import BackButton from "../components/BackButton";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Ship {
   shipId: number;
@@ -21,14 +24,37 @@ interface PreCruiseFormProps {
   error?: string;
 }
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   // Fetch your ships data here
   try {
-    const shipsRes = await fetch('http://localhost:8080/api/v1.1/data/allShips');
+    const shipsRes = await fetch('http://localhost:8080/api/v1.1/data/allShips',
+      {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: context.req.headers.cookie || '',
+        },
+      }
+    )
+    
+    if (!shipsRes.ok) {
+      throw new Error(`Error: ${shipsRes.status}`);
+    }
     const ships = await shipsRes.json();
     console.log(ships);
 
-    const registeredUsersRes = await fetch('http://localhost:8080/api/v1.1/data/allRegisteredUsers');
+    const registeredUsersRes = await fetch('http://localhost:8080/api/v1.1/data/allUsers',
+    {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: context.req.headers.cookie || '',
+      },
+    }
+    );
+    if (!registeredUsersRes.ok) {
+      throw new Error(`Error: ${registeredUsersRes.status}`);
+    }
     const users = await registeredUsersRes.json();
     console.log(users); 
 
@@ -47,9 +73,40 @@ export async function getServerSideProps() {
 
 const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) => {
 
+  const [submissionStatus, setSubmissionStatus] = useState({ status: '', message: '' });
+
    // State to store the selected ship ID
-   const [selectedShipId, setSelectedShipId] = useState<number | undefined>();
-   const [selectedUserId, setSelectedUserId] = useState<number | undefined>();
+  const [selectedShipId, setSelectedShipId] = useState<number | undefined>();
+  const [selectedUserId, setSelectedUserId] = useState<number | undefined>();
+  const [selectPrincipleID, setPrincipleId] = useState<number | undefined>();
+  const [purpose, setPurpose] = useState('');
+  const [scheduledStartDate, setScheduledStartDate] = useState('');
+  const [scheduledEndDate, setScheduledEndDate] = useState('');
+  const [equipmentDescription, setEquipmentDescription] = useState('');
+  const [participants, setParticipants] = useState('');
+  const [regionDescription, setRegionDescription] = useState('');
+  const [plannedTrackDescription, setPlannedTrackDescription] = useState('');
+
+  const handlePurposeChange = (e: { target: { value: SetStateAction<string>; }; }) => setPurpose(e.target.value);
+  const handleScheduledStartDateChange = (e: { target: { value: SetStateAction<string>; }; }) => setScheduledStartDate(e.target.value);
+  const handleScheduledEndDateChange = (e: { target: { value: SetStateAction<string>; }; }) => setScheduledEndDate(e.target.value);
+  const handleEquipmentDescriptionChange = (e: { target: { value: SetStateAction<string>; }; }) => setEquipmentDescription(e.target.value);
+  const handleParticipantsChange = (e: { target: { value: SetStateAction<string>; }; }) => setParticipants(e.target.value);
+  const handleRegionDescriptionChange = (e: { target: { value: SetStateAction<string>; }; }) => setRegionDescription(e.target.value);
+  const handlePlannedTrackDescriptionChange = (e: { target: { value: SetStateAction<string>; }; }) => setPlannedTrackDescription(e.target.value);
+
+  const resetForm = () => {
+    setSelectedShipId(undefined);
+    setSelectedUserId(undefined);
+    setPrincipleId(undefined);
+    setPurpose('');
+    setScheduledStartDate('');
+    setScheduledEndDate('');
+    setEquipmentDescription('');
+    setParticipants('');
+    setRegionDescription('');
+    setPlannedTrackDescription('');
+  };
 
    const handleShipChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const shipId = parseInt(event.target.value, 10);
@@ -62,6 +119,53 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
     setSelectedUserId(userId);
    };
 
+   const handlePrincipleChange =  (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const userId = parseInt(event.target.value, 10);
+    setPrincipleId(userId);
+   };
+
+   const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    event.preventDefault();
+    const preExpeditionData = {
+      shipId: selectedShipId,
+      chiefScientistId: selectedUserId,
+      principalInvestigatorId: selectPrincipleID,
+      purpose,
+      scheduledStartDate,
+      scheduledEndDate,
+      equipmentDescription,
+      participants,
+      regionDescription,
+      plannedTrackDescription,
+    };
+
+    try {
+      const response = await fetch('http://localhost:8080/api/v1.1/preExpedition', {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(preExpeditionData),
+      });
+  
+      if (response.ok) {
+        // Call the reset function here upon successful submission
+        resetForm();
+        setSubmissionStatus({ status: 'success', message: 'Form submitted successfully.' });
+        toast.success('Form submitted successfully.');
+      } else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error posting data:', error);
+      setSubmissionStatus({ status: 'error', message: error.message || 'Failed to submit the form.' });
+      toast.error('Failed to submit the form.');
+    }
+  };
+
+   
+
    if (error) {
     return <div>Error fetching ships: {error}</div>;
   }
@@ -70,11 +174,21 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
     <div className="h-screen  overflow-y-auto ">
       <Navbar currentPage="precruise" className="sticky top-0 z-10" />
       <div className="bg-custom-blue flex flex-col items-center justify-center font-sans text-cyan-900 pt-24">
+
+      {submissionStatus.message && (
+        <div className={`alert ${submissionStatus.status === 'success' ? 'alert-success' : 'alert-error'}`}>
+          {submissionStatus.message}
+        </div>
+      )}
+      <ToastContainer
+      position="top-center"
+       />
+
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl">
           <h1 className="mb-2 text-2xl text-center text-cyan-900 font-bold">
             Pre-Cruise Form
           </h1>
-          <form method="post">
+          <form onSubmit={handleSubmit}>
             <fieldset>
               <p className="mb-4 text-sm text-center italic">
                 Please fill out all the information below in order to submit a
@@ -134,8 +248,8 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                   <select
                     id="principalInvestigator"
                     name="principleInvestigator"
-                    onChange={handleUserChange}
-                    value={selectedUserId || ''}
+                    onChange={handlePrincipleChange}
+                    value={selectPrincipleID || ''}
                     className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                     required
                   >
@@ -157,6 +271,8 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                 <textarea
                   id="purpose"
                   name="purpose"
+                  onChange={handlePurposeChange}
+                  value={purpose || ''}
                   rows={3}
                   cols={30}
                   className="w-full border max-h-[100px] rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
@@ -173,11 +289,13 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                 Scheduled Start Date time:
                 <div className="relative max-w-sm">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                   
                   </div>
                   <input
                     type="date"
                     id="scheduledEndDatetime"
+                    onChange={handleScheduledStartDateChange}
+                    value={scheduledStartDate || ''}
                     name="scheduledEndDatetime"
                     className=" shadow leading-tight focus:outline-none focus:shadow-outline border border-gray-300  text-cyan-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 "
                     required
@@ -194,6 +312,8 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                   <input
                     type="date"
                     id="scheduledEndDatetime"
+                    onChange={handleScheduledEndDateChange}
+                    value={scheduledEndDate || ''}
                     name="scheduledEndDatetime"
                     className=" shadow leading-tight focus:outline-none focus:shadow-outline border border-gray-300  text-cyan-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required
@@ -211,6 +331,8 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                   name="equipmentDescription"
                   rows={3}
                   cols={30}
+                  onChange={handleEquipmentDescriptionChange}
+                  value={equipmentDescription || ''}
                   className="w-full border max-h-[100px] rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="Equipment Description (up to 8000 character text field)"
                   required
@@ -227,6 +349,8 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                   name="participants"
                   rows={3}
                   cols={30}
+                  onChange={handleParticipantsChange}
+                  value={participants || ''}
                   className="w-full border max-h-[100px] rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="participants (up to 8000 character text field)"
                   required
@@ -243,6 +367,8 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                   name="regionDescription"
                   rows={3}
                   cols={30}
+                  onChange={handleRegionDescriptionChange}
+                  value={regionDescription || ''}
                   className="w-full border max-h-[150px] rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="Region Description (up to 2048 character text field)"
                   required
@@ -259,6 +385,8 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                   name="plannedTrackDescription"
                   rows={3}
                   cols={30}
+                  onChange={handlePlannedTrackDescriptionChange}
+                  value={plannedTrackDescription || ''}
                   className="w-full border max-h-[150px] rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="Planned Track Description (up to 6144 character text field)"
                   required
