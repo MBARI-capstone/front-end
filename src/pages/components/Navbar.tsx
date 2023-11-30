@@ -1,8 +1,8 @@
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Fragment, useState } from "react";
-import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
+import React from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Fragment, useState } from 'react'
+import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
 import {
   ArrowPathIcon,
   Bars3Icon,
@@ -11,15 +11,15 @@ import {
   FingerPrintIcon,
   SquaresPlusIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline'
 
 type NavbarProps = {
-  currentPage: "postcruise" | "precruise";
-  className?: string;
-};
+  currentPage: 'postcruise' | 'precruise'
+  className?: string
+}
 
 const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   return (
     <>
       <div className={`some-navbar-styles ${className}`}></div>
@@ -29,16 +29,21 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
           aria-label="Global"
         >
           <div className="flex lg:flex-1">
-            <a href="#" className="-m-1.5 p-1.5">
+            <Link href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Your Company</span>
               <div
                 className="absolute top-0 left-0 h-40 w-auto md:block hidden"
                 // src="/MBARI-Logo.png"
                 // alt="mbarilogo"
               >
-              <Image src="/MBARI-Logo.png" alt={"mbarilogo"} width={100} height={100} />
+                <Image
+                  src="/MBARI-Logo.png"
+                  alt={'mbarilogo'}
+                  width={100}
+                  height={100}
+                />
               </div>
-            </a>
+            </Link>
           </div>
           <div className="flex lg:hidden">
             <button
@@ -59,13 +64,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
             </a>
             <a
               href={
-                currentPage === "postcruise"
-                  ? "/PreCruiseForm"
-                  : "/PostCruiseForm"
+                currentPage === 'postcruise'
+                  ? '/PreCruiseForm'
+                  : '/PostCruiseForm'
               }
               className="text-sm font-semibold leading-6 text-gray-900"
             >
-              {currentPage === "postcruise" ? "Pre-Cruise" : "Post-Cruise"}
+              {currentPage === 'postcruise' ? 'Pre-Cruise' : 'Post-Cruise'}
             </a>
             <a
               href="/ReportsSearch"
@@ -124,15 +129,15 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
                   </a>
                   <a
                     href={
-                      currentPage === "postcruise"
-                        ? "/PreCruiseForm"
-                        : "/PostCruiseForm"
+                      currentPage === 'postcruise'
+                        ? '/PreCruiseForm'
+                        : '/PostCruiseForm'
                     }
                     className="text-sm font-semibold leading-6 text-gray-900"
                   >
-                    {currentPage === "postcruise"
-                      ? "Pre-Cruise"
-                      : "Post-Cruise"}
+                    {currentPage === 'postcruise'
+                      ? 'Pre-Cruise'
+                      : 'Post-Cruise'}
                   </a>
 
                   <a
@@ -162,7 +167,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
         </Dialog>
       </header>
     </>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
