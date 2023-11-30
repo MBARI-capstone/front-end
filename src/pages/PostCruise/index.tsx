@@ -105,7 +105,7 @@ const PostCruise: React.FC<PreExpeditionsProps> = ({ expeditions }) => {
                 </p>
               </div>
               <Button
-                hrefLink={`/${expedition.expeditionId}`}
+                hrefLink={`/PostCruise/${expedition.expeditionId}`}
                 buttonName="Add"
               />
             </div>

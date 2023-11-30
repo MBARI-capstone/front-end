@@ -5,78 +5,62 @@ import BackButton from '../components/BackButton'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 
 interface User {
   userId: number
-  firstName: string
-  lastName: string
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  try {
-    const registeredUsersRes = await fetch(
-      'http://localhost:8080/api/v1.1/data/allUsers',
-      {
-        credentials: 'include',
-        headers: {
-          'Content-type': 'application/json',
-          Cookie: context.req.headers.cookie || '',
-        },
-      }
-    )
-    if (!registeredUsersRes.ok) {
-      throw new Error(`Error: ${registeredUsersRes.status}`)
-    }
-    const users = await registeredUsersRes.json()
-    console.log(users)
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//   try {
+//     const response = await fetch(
+//       'http://localhost:8080/api/v1.1/auth/myUserId',
+//       {
+//         credentials: 'include',
+//         headers: {
+//           'Content-type': 'application/json',
+//           Cookie: context.req.headers.cookie || '',
+//         },
+//       }
+//     )
+//     if (!response.ok) {
+//       throw new Error(`Error: ${response.status}`)
+//     }
+//     const userId = await response.json()
+//     console.log('userid: ', userId)
+//     return {
+//       props: {
+//         userId,
+//       },
+//     }
+//   } catch (error: any) {
+//     // In case of an error, you can return an error prop, or you can choose to handle it differently
+//     return { props: { error: error.message } }
+//   }
+// }
 
-    const currentUserRes = await fetch(
-      'http://localhost:8080/api/v1.1/data/allUsers',
-      {
-        credentials: 'include',
-        headers: {
-          'Content-type': 'application/json',
-          Cookie: context.req.headers.cookie || '',
-        },
-      }
-    )
-
-    let currentUser = null
-    if (currentUserRes.ok) {
-      currentUser = await currentUserRes.json()
-      console.log(currentUser)
-    }
-    return {
-      props: {
-        users,
-        currentUser,
-      },
-    }
-  } catch (error: any) {
-    // In case of an error, you can return an error prop, or you can choose to handle it differently
-    return { props: { error: error.message } }
-  }
+interface Props {
+  id: number
+  // userId: number
 }
 
-interface PostCruiseFormProps {
-  currentUser: User
-}
-
-const PostCruiseForm: React.FC<PostCruiseFormProps> = ({ currentUser }) => {
+const PostCruiseForm: React.FC = () => {
+  const router = useRouter()
+  const id = router.query.id
+  console.log('id from page', id)
   const [submissionStatus, setSubmissionStatus] = useState({
     status: '',
     message: '',
   })
   const [actualStartDate, setactualStartDate] = useState('')
   const [actualEndDate, setactualEndDate] = useState('')
-  const [acomplishments, setAccomplishments] = useState('')
+  const [accomplishments, setAccomplishments] = useState('')
   const [scientistComments, setScientistComments] = useState('')
   const [sciObjectivesMet, setsciObjectivesMet] = useState<boolean>(false)
   const [operatorComments, setoperatorComments] = useState('')
   const [allEquipmentFunctioned, setallEquipmentFunctioned] =
     useState<boolean>(false)
   const [otherComments, setotherComments] = useState('')
-  const [updatedBy, setUpdatedBy] = useState<number>(1)
 
   const handleActualStartDate = (e: {
     target: { value: SetStateAction<string> }
@@ -101,12 +85,6 @@ const PostCruiseForm: React.FC<PostCruiseFormProps> = ({ currentUser }) => {
     target: { value: SetStateAction<string> }
   }) => setotherComments(e.target.value)
 
-  useEffect(() => {
-    if (currentUser && currentUser.userId) {
-      setUpdatedBy(currentUser.userId)
-    }
-  }, [currentUser])
-
   const resetForm = () => {
     setactualStartDate('')
     setactualEndDate('')
@@ -121,14 +99,15 @@ const PostCruiseForm: React.FC<PostCruiseFormProps> = ({ currentUser }) => {
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault()
     const postExpeditionData = {
-      actualStartDate,
-      actualEndDate,
-      acomplishments,
-      scientistComments,
-      sciObjectivesMet,
-      operatorComments,
-      allEquipmentFunctioned,
-      otherComments,
+      expeditionId: id,
+      actualStartDate: actualStartDate,
+      actualEndDate: actualEndDate,
+      accomplishments: accomplishments,
+      scientistComments: scientistComments,
+      sciObjectivesMet: sciObjectivesMet,
+      operatorComments: operatorComments,
+      allEquipmentFunctioned: allEquipmentFunctioned,
+      otherComments: otherComments,
       updatedBy: 1,
     }
 
@@ -226,7 +205,7 @@ const PostCruiseForm: React.FC<PostCruiseFormProps> = ({ currentUser }) => {
                 id="acomplishments"
                 name="acomplishments"
                 onChange={handleAccomplishments}
-                value={acomplishments || ''}
+                value={accomplishments || ''}
                 className="w-full border max-h-[100px] rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="acomplishments (up to 8000 character text field)"
                 required
