@@ -28,7 +28,28 @@ const PreCruiseApproval = () => {
   const [selectedExpedition, setSelectedExpedition] =
     useState<UnApprovedPreExpedition | null>(null)
   const [isModalOpen, setModalOpen] = useState(false)
-  const formatBoolean = (value: any) => (value ? 'Yes' : 'No')
+
+  const fetchExpeditions = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:8080/api/v1.1/preExpedition/unapproved',
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        }
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const data = await response.json()
+      setExpeditions(data)
+    } catch (error) {
+      console.error('Fetching expeditions failed', error)
+    }
+  }
 
   const openModal = () => {
     setModalOpen(true)
@@ -71,6 +92,8 @@ const PreCruiseApproval = () => {
             message: 'Approved successfully.',
           })
           toast.success('Approved successfully.')
+          fetchExpeditions()
+          setSelectedExpedition(null)
         } else {
           throw new Error(`HTTP error! Status: ${response.status}`)
         }
@@ -87,28 +110,6 @@ const PreCruiseApproval = () => {
 
   // Fetch data from the API when the component mounts
   useEffect(() => {
-    const fetchExpeditions = async () => {
-      try {
-        const response = await fetch(
-          'http://localhost:8080/api/v1.1/preExpedition/unapproved',
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-          }
-        ) // Replace with your API endpoint
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const data = await response.json()
-        setExpeditions(data)
-      } catch (error) {
-        console.error('Fetching expeditions failed', error)
-      }
-    }
-
     fetchExpeditions()
   }, [])
 
@@ -186,39 +187,6 @@ const PreCruiseApproval = () => {
                 <strong>Planned Track Description:</strong>{' '}
                 {selectedExpedition.plannedTrackDescription}
               </p>
-              {/* <p>
-                <strong>Actual Start Date:</strong>{' '}
-                {selectedExpedition.actualStartDate}
-              </p>
-              <p>
-                <strong>Actual End Date:</strong>{' '}
-                {selectedExpedition.actualEndDate}
-              </p>
-              <p>
-                <strong>Accomplishments:</strong>{' '}
-                {selectedExpedition.accomplishments}
-              </p>
-              <p>
-                <strong>Scientist Comments:</strong>{' '}
-                {selectedExpedition.scientistComments}
-              </p>
-              <p>
-                <strong>Scientific Objectives Met:</strong>{' '}
-                {formatBoolean(selectedExpedition.sciObjectivesMet)}
-              </p>
-              <p>
-                <strong>Operator Comments:</strong>{' '}
-                {selectedExpedition.operatorComments}
-              </p>
-              <p>
-                <strong>All Equipment Functioned:</strong>{' '}
-                {formatBoolean(selectedExpedition.allEquipmentFunctioned)}
-              </p>
-              <p>
-                <strong>Other Comments:</strong>{' '}
-                {selectedExpedition.otherComments}
-              </p>
-              Approve and Deny buttons */}
             </div>
           )}
           <Modal

@@ -11,7 +11,7 @@ export const ApprovePrecruise = () => {
 }
 
 export const Postcruise = () => {
-  return <Button hrefLink="/PreCruiseSearch" buttonName="Post Cruise" />
+  return <Button hrefLink="/PostCruise" buttonName="Post Cruise" />
 }
 
 export const DiveSearch = () => {
