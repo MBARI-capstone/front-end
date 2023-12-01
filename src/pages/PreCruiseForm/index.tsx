@@ -159,6 +159,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({
       participants: participants,
       regionDescription: regionDescription,
       plannedTrackDescription: plannedTrackDescription,
+      isPreApproved: 0,
     }
 
     try {
