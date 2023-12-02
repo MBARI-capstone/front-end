@@ -1,6 +1,6 @@
-import React from "react";
-import Navbar from "../components/Navbar";
-import BackButton from "../components/BackButton";
+import React from 'react'
+import Navbar from '../../components/Navbar'
+import BackButton from '../../components/BackButton'
 
 const Dives = () => {
   return (
@@ -92,7 +92,7 @@ const Dives = () => {
             <div className="flex flex-wrap">
               {/* This creates a flexible space */}
               <BackButton hrefLink="/PageSelect" buttonName="Back" />
-              <div className="flex-1"></div>{" "}
+              <div className="flex-1"></div>{' '}
               <input
                 type="submit"
                 className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
@@ -103,7 +103,7 @@ const Dives = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dives;
+export default Dives
