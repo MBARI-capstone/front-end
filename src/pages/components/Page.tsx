@@ -14,6 +14,10 @@ export const Postcruise = () => {
   return <Button hrefLink="/PostCruise" buttonName="Post Cruise" />
 }
 
+export const Dive = () => {
+  return <Button hrefLink="/SelectPostCruise" buttonName="Add Dive" />
+}
+
 export const DiveSearch = () => {
   return <Button hrefLink="/DiveSearch" buttonName="Add Dive" />
 }
