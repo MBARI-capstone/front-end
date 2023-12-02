@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, SetStateAction} from "react";
 import Navbar from "../components/Navbar";
 import BackButton from "../components/BackButton";
+import { GetServerSideProps } from "next";
 
 interface Ship {
   shipId: number;
@@ -8,80 +9,119 @@ interface Ship {
   shipDescription?: string;
 }
 
-
-
-function ShipSelector({ onShipSelected }) {
-  // State to store Ship data 
-  const [ships, setShips] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchShips() {
-      setIsLoading(true);
-      try {
-        const response = await fetch('http://localhost:8080/api/v1.1/data/allShips');
-        const data = await response.json();
-        setShips(data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching ships:', error);
-        setIsLoading(false);
-      }
-    }
-
-    fetchShips();
-  }, []);
-
-
-  if (isLoading) return <p>Loading...</p>;
-
-  return (
-    <select
-      id="shipName"
-      name="shipName"
-      className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-      required
-      onChange={onShipSelected}
-    >
-      <option value="">(Select One)</option>
-      {ships.map((ship) => (
-        <option key={ship.shipId} value={ship.shipId}>
-          {ship.shipName}
-        </option>
-      ))}
-    </select>
-  );
+interface User {
+  userId: number
+  firstName: string
+  lastName: string
 }
 
-const ReportsSearch = () => {
+interface ShipandUserprops {
+  ships: Ship[]
+  users: User[]
+  error?: string
+}
 
+interface SearchParams {
+  shipId: number | null;
+  expeditionChiefScientistId: number | null;
+  principalInvestigatorId: number | null;
+  expeditionStartDate: string | null;
+  expeditionEndDate: string | null;
+  expeditionSequenceNumber: number | null;
+  sciObjectivesMet: boolean | null;
+  allEquipmentFunctioned: boolean | null;
+  diveNumber: string | null;
+  diveChiefScientistId: number | null;
+  diveStartDate: string | null;
+  diveEndDate: string | null;
+  keyword: string | null;
+}
+
+
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  // Fetch your ships data here
+  try {
+    const shipsRes = await fetch(
+      'http://localhost:8080/api/v1.1/data/allShips',
+      {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: context.req.headers.cookie || '',
+        },
+      }
+    )
+
+    if (!shipsRes.ok) {
+      throw new Error(`Error: ${shipsRes.status}`)
+    }
+    const ships = await shipsRes.json()
+    console.log(ships)
+
+    const registeredUsersRes = await fetch(
+      'http://localhost:8080/api/v1.1/data/allUsers',
+      {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: context.req.headers.cookie || '',
+        },
+      }
+    )
+    if (!registeredUsersRes.ok) {
+      throw new Error(`Error: ${registeredUsersRes.status}`)
+    }
+    const users = await registeredUsersRes.json()
+    console.log(users)
+
+    return {
+      props: {
+        ships,
+        users,
+      },
+    }
+  } catch (error: any) {
+    // In case of an error, you can return an error prop, or you can choose to handle it differently
+    return { props: { error: error.message } }
+  }
+}
+
+const ReportsSearch: React.FC<ShipandUserprops> = ({
+  ships, 
+  users,
+  error,
+}) => {
+
+  const [selectedShipId, setSelectedShipId] = useState<number | undefined>()
+  const [selectedUserId, setSelectedUserId] = useState<number | undefined>()
+  const [selectPrincipleID, setPrincipleId] = useState<number | undefined>()
   // State to hold the search parameters
-  const [searchParams, setSearchParams] = useState({
-    shipId: '',
-    expeditionChiefScientistId: '',
-    principalInvestigatorId: '',
-    expeditionStartDate: '',
-    expeditionEndDate: '',
-    expeditionSequenceNumber: '',
-    sciObjectivesMet: '',
-    allEquipmentFunctioned: true,
-    diveNumber: '',
-    diveChiefScientistId: '',
-    diveStartDate: '',
-    diveEndDate: '',
-    keyword: ''
-
+  const [searchParams, setSearchParams] = useState<SearchParams>({
+    shipId: null,
+    expeditionChiefScientistId: null,
+    principalInvestigatorId: null,
+    expeditionStartDate: null,
+    expeditionEndDate: null,
+    expeditionSequenceNumber: null,
+    sciObjectivesMet: null,
+    allEquipmentFunctioned: null,
+    diveNumber: null,
+    diveChiefScientistId: null,
+    diveStartDate: null,
+    diveEndDate: null,
+    keyword: null,
   });
 
   //State to hold the search results
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<SearchParams[]>([]);
 
   //Function to handle input changes and update search parameters
-  const handleInputChange = (e) => {
-    const {name, value} = e.target;
-    setSearchParams(prevParams => ({
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setSearchParams((prevParams) => ({
       ...prevParams,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -107,22 +147,58 @@ const ReportsSearch = () => {
     }
   };
 
+  const filterResults = () => {
+    return searchResults.filter((result) => {
+      return (
+        (searchParams.shipId === null|| result.shipId === searchParams.shipId ) &&  
+        (searchParams.expeditionChiefScientistId === null || result.expeditionChiefScientistId === searchParams.expeditionChiefScientistId) &&
+        (searchParams.principalInvestigatorId === null || result.principalInvestigatorId === searchParams.principalInvestigatorId) &&
+        (searchParams.expeditionStartDate === null || result.expeditionStartDate === searchParams.expeditionStartDate) && 
+        (searchParams.expeditionEndDate === null || result.expeditionEndDate === searchParams.expeditionEndDate) &&
+        (searchParams.expeditionSequenceNumber === null || result.expeditionSequenceNumber == searchParams.expeditionSequenceNumber) &&
+        (searchParams.sciObjectivesMet === null || result.sciObjectivesMet === searchParams.sciObjectivesMet) &&
+        (searchParams.allEquipmentFunctioned === null || result.allEquipmentFunctioned === searchParams.allEquipmentFunctioned) &&
+        (searchParams.diveNumber === null || result.diveNumber === searchParams.diveNumber) &&
+        (searchParams.diveChiefScientistId === null || result.diveChiefScientistId === searchParams.diveChiefScientistId) &&
+        (searchParams.diveStartDate === null || result.diveStartDate === searchParams.diveStartDate) && 
+        (searchParams.diveEndDate === null || result.diveEndDate === searchParams.diveEndDate) && 
+        (searchParams.keyword === null || result.keyword === searchParams.keyword)
+      );
+    });
+  };
+
+
   const renderSearchResults = () => {
-    return searchResults.map(result => (
-      <div key={result.id}>
+    const filteredResults = filterResults();
+
+    if (filteredResults.length === 0){
+      return <p> No Matching Results</p>
+    }
+
+    return filteredResults.map((result) => (
+      <div key={result.shipId}>
         {/* Render your search result items here */}
-        <p>{result.name}</p>
+        <p>{result.shipId}</p>
       </div>
     ));
   };
 
-  const handleShipChange = (e) => {
-    // Update the shipId in the searchParams state
-    setSearchParams((prevParams) => ({
-      ...prevParams,
-      shipId: e.target.value
-    }));
-  };
+  const handleShipChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const shipId = parseInt(event.target.value, 10)
+    setSelectedShipId(shipId)
+  }
+
+  const handleUserChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const userId = parseInt(event.target.value, 10)
+    setSelectedUserId(userId)
+  }
+
+  const handlePrincipleChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const userId = parseInt(event.target.value, 10)
+    setPrincipleId(userId)
+  }
   
   return (
     <main>
@@ -154,7 +230,20 @@ const ReportsSearch = () => {
                       className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4"
                     >
                       Ship Name:
-                      <ShipSelector onShipSelected={handleShipChange} />
+                      <select
+                        id="shipName"
+                        name="shipName"
+                        onChange={handleShipChange}
+                        value={selectedShipId || ''}
+                        className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                      >
+                        <option value="">(Select a Ship)</option>
+                        {ships.map((ship) => (
+                          <option key={ship.shipId} value={ship.shipId}>
+                          {ship.shipName}
+                        </option>
+                        ))}  
+                      </select>
                     </label>
                     <br />
 
