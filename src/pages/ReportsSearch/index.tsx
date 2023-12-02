@@ -1,4 +1,4 @@
-import { useState, SetStateAction} from "react";
+import { useState, SetStateAction } from "react";
 import Navbar from "../components/Navbar";
 import BackButton from "../components/BackButton";
 import { GetServerSideProps } from "next";
@@ -10,15 +10,15 @@ interface Ship {
 }
 
 interface User {
-  userId: number
-  firstName: string
-  lastName: string
+  userId: number;
+  firstName: string;
+  lastName: string;
 }
 
 interface ShipandUserprops {
-  ships: Ship[]
-  users: User[]
-  error?: string
+  ships: Ship[];
+  users: User[];
+  error?: string;
 }
 
 interface SearchParams {
@@ -37,65 +37,61 @@ interface SearchParams {
   keyword: string | null;
 }
 
-
-
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // Fetch your ships data here
   try {
     const shipsRes = await fetch(
-      'http://localhost:8080/api/v1.1/data/allShips',
+      "http://localhost:8080/api/v1.1/data/allShips",
       {
-        credentials: 'include',
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json',
-          Cookie: context.req.headers.cookie || '',
+          "Content-Type": "application/json",
+          Cookie: context.req.headers.cookie || "",
         },
       }
-    )
+    );
 
     if (!shipsRes.ok) {
-      throw new Error(`Error: ${shipsRes.status}`)
+      throw new Error(`Error: ${shipsRes.status}`);
     }
-    const ships = await shipsRes.json()
-    console.log(ships)
+    const ships = await shipsRes.json();
+    console.log(ships);
 
     const registeredUsersRes = await fetch(
-      'http://localhost:8080/api/v1.1/data/allUsers',
+      "http://localhost:8080/api/v1.1/data/allUsers",
       {
-        credentials: 'include',
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json',
-          Cookie: context.req.headers.cookie || '',
+          "Content-Type": "application/json",
+          Cookie: context.req.headers.cookie || "",
         },
       }
-    )
+    );
     if (!registeredUsersRes.ok) {
-      throw new Error(`Error: ${registeredUsersRes.status}`)
+      throw new Error(`Error: ${registeredUsersRes.status}`);
     }
-    const users = await registeredUsersRes.json()
-    console.log(users)
+    const users = await registeredUsersRes.json();
+    console.log(users);
 
     return {
       props: {
         ships,
         users,
       },
-    }
+    };
   } catch (error: any) {
     // In case of an error, you can return an error prop, or you can choose to handle it differently
-    return { props: { error: error.message } }
+    return { props: { error: error.message } };
   }
-}
+};
 
-const ReportsSearch: React.FC<ShipandUserprops> = ({
-  ships, 
-  users,
-  error,
-}) => {
-
-  const [selectedShipId, setSelectedShipId] = useState<number | undefined>()
-  const [selectedUserId, setSelectedUserId] = useState<number | undefined>()
-  const [selectPrincipleID, setPrincipleId] = useState<number | undefined>()
+const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
+  const [selectedShipId, setSelectedShipId] = useState<number | undefined>();
+  const [selectedUserId, setSelectedUserId] = useState<number | undefined>();
+  const [selectPrincipleID, setPrincipleId] = useState<number | undefined>();
+  const [selectDiveChiefScientistId, setDiveChiefId] = useState<
+    number | undefined
+  >();
   // State to hold the search parameters
   const [searchParams, setSearchParams] = useState<SearchParams>({
     shipId: null,
@@ -125,13 +121,22 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({
     }));
   };
 
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setSearchParams((prevParams) => ({
+      ...prevParams,
+      [name]: value,
+    }));
+  };
+
   // Function to execute the search
-  const executeSearch = async () => {
+  const executeSearch = async (event: { preventDefault: () => void; }) => {
+    event.preventDefault();
     try {
-      const response = await fetch('http://localhost:8080/api/v1.1/search', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8080/api/v1.1/search", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(searchParams),
       });
@@ -150,56 +155,101 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({
   const filterResults = () => {
     return searchResults.filter((result) => {
       return (
-        (searchParams.shipId === null|| result.shipId === searchParams.shipId ) &&  
-        (searchParams.expeditionChiefScientistId === null || result.expeditionChiefScientistId === searchParams.expeditionChiefScientistId) &&
-        (searchParams.principalInvestigatorId === null || result.principalInvestigatorId === searchParams.principalInvestigatorId) &&
-        (searchParams.expeditionStartDate === null || result.expeditionStartDate === searchParams.expeditionStartDate) && 
-        (searchParams.expeditionEndDate === null || result.expeditionEndDate === searchParams.expeditionEndDate) &&
-        (searchParams.expeditionSequenceNumber === null || result.expeditionSequenceNumber == searchParams.expeditionSequenceNumber) &&
-        (searchParams.sciObjectivesMet === null || result.sciObjectivesMet === searchParams.sciObjectivesMet) &&
-        (searchParams.allEquipmentFunctioned === null || result.allEquipmentFunctioned === searchParams.allEquipmentFunctioned) &&
-        (searchParams.diveNumber === null || result.diveNumber === searchParams.diveNumber) &&
-        (searchParams.diveChiefScientistId === null || result.diveChiefScientistId === searchParams.diveChiefScientistId) &&
-        (searchParams.diveStartDate === null || result.diveStartDate === searchParams.diveStartDate) && 
-        (searchParams.diveEndDate === null || result.diveEndDate === searchParams.diveEndDate) && 
-        (searchParams.keyword === null || result.keyword === searchParams.keyword)
+        (searchParams.shipId === null ||
+          result.shipId === searchParams.shipId) &&
+        (searchParams.expeditionChiefScientistId === null ||
+          result.expeditionChiefScientistId ===
+            searchParams.expeditionChiefScientistId) &&
+        (searchParams.principalInvestigatorId === null ||
+          result.principalInvestigatorId ===
+            searchParams.principalInvestigatorId) &&
+        (searchParams.expeditionStartDate === null ||
+          result.expeditionStartDate === searchParams.expeditionStartDate) &&
+        (searchParams.expeditionEndDate === null ||
+          result.expeditionEndDate === searchParams.expeditionEndDate) &&
+        (searchParams.expeditionSequenceNumber === null ||
+          result.expeditionSequenceNumber ==
+            searchParams.expeditionSequenceNumber) &&
+        (searchParams.sciObjectivesMet === null ||
+          result.sciObjectivesMet === searchParams.sciObjectivesMet) &&
+        (searchParams.allEquipmentFunctioned === null ||
+          result.allEquipmentFunctioned ===
+            searchParams.allEquipmentFunctioned) &&
+        (searchParams.diveNumber === null ||
+          result.diveNumber === searchParams.diveNumber) &&
+        (searchParams.diveChiefScientistId === null ||
+          result.diveChiefScientistId === searchParams.diveChiefScientistId) &&
+        (searchParams.diveStartDate === null ||
+          result.diveStartDate === searchParams.diveStartDate) &&
+        (searchParams.diveEndDate === null ||
+          result.diveEndDate === searchParams.diveEndDate) &&
+        (searchParams.keyword === null ||
+          result.keyword === searchParams.keyword)
       );
     });
   };
 
-
   const renderSearchResults = () => {
     const filteredResults = filterResults();
 
-    if (filteredResults.length === 0){
-      return <p> No Matching Results</p>
+    if (filteredResults.length === 0) {
+      return <p> No Matching Results</p>;
     }
 
-    return filteredResults.map((result) => (
-      <div key={result.shipId}>
+    return filteredResults.map((result, index) => (
+      <div key={index} className="result-item">
+         <p>Ship ID: {result.shipId}</p>
+      <p>Expedition Chief Scientist ID: {result.expeditionChiefScientistId}</p>
+      <p>Principal Investigator ID: {result.principalInvestigatorId}</p>
+      <p>Expedition Start Date: {result.expeditionStartDate}</p>
+      <p>Expedition End Date: {result.expeditionEndDate}</p>
+      <p>Expedition Sequence Number: {result.expeditionSequenceNumber}</p>
+      <p>Scientific Objectives Met: {result.sciObjectivesMet ? "Yes" : "No"}</p>
+      <p>All Equipment Functioned: {result.allEquipmentFunctioned ? "Yes" : "No"}</p>
+      <p>Dive Number: {result.diveNumber}</p>
+      <p>Dive Chief Scientist ID: {result.diveChiefScientistId}</p>
+      <p>Dive Start Date: {result.diveStartDate}</p>
+      <p>Dive End Date: {result.diveEndDate}</p>
+      <p>Keyword: {result.keyword}</p>
+
         {/* Render your search result items here */}
-        <p>{result.shipId}</p>
+        
       </div>
     ));
   };
 
   const handleShipChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const shipId = parseInt(event.target.value, 10)
-    setSelectedShipId(shipId)
-  }
+    const shipId = parseInt(event.target.value, 10);
+    setSelectedShipId(shipId);
+  };
 
   const handleUserChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const userId = parseInt(event.target.value, 10)
-    setSelectedUserId(userId)
-  }
+    const userId = parseInt(event.target.value, 10);
+    setSelectedUserId(userId);
+  };
 
   const handlePrincipleChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const userId = parseInt(event.target.value, 10)
-    setPrincipleId(userId)
-  }
-  
+    const userId = parseInt(event.target.value, 10);
+    setPrincipleId(userId);
+  };
+
+  const handleDiveScientistChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const userId = parseInt(event.target.value, 10);
+    setDiveChiefId(userId);
+  };
+
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setSearchParams((prevParams) => ({
+      ...prevParams,
+      [name]: value,
+    }));
+  };
+
   return (
     <main>
       <div className="h-screen  overflow-y-auto ">
@@ -234,15 +284,15 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({
                         id="shipName"
                         name="shipName"
                         onChange={handleShipChange}
-                        value={selectedShipId || ''}
+                        value={selectedShipId || ""}
                         className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                       >
                         <option value="">(Select a Ship)</option>
                         {ships.map((ship) => (
                           <option key={ship.shipId} value={ship.shipId}>
-                          {ship.shipName}
-                        </option>
-                        ))}  
+                            {ships && ship.shipName}
+                          </option>
+                        ))}
                       </select>
                     </label>
                     <br />
@@ -254,13 +304,17 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({
                       Chief Scientist:
                       <select
                         id="chiefScientist"
+                        name="chiefScientist"
+                        onChange={handleUserChange}
+                        value={selectedUserId || ""}
                         className="block appearance-none w-full bg-white border border-gray-400  hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                        
                       >
-                        <option value="">(Select One)</option>
-                        <option value="1">Scientist 1</option>
-                        <option value="2">Scientist 2</option>
-                        <option value="3">Scientist 3</option>
+                        <option value="">(Select Chief Scientist)</option>
+                        {users.map((user) => (
+                          <option key={user.userId} value={user.userId}>
+                            {`${user.firstName}`}
+                          </option>
+                        ))}
                       </select>
                     </label>
                     <br />
@@ -271,13 +325,19 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({
                       Principal Investigator:
                       <select
                         id="principalInvestigator"
+                        name="principleInvestigator"
+                        onChange={handlePrincipleChange}
+                        value={selectPrincipleID || ""}
                         className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                        
                       >
-                        <option value="">(Select One)</option>
-                        <option value="1">Investigator 1</option>
-                        <option value="2">Investigator 2</option>
-                        <option value="3">Investigator 3</option>
+                        <option value="">
+                          (Select Principal Investigator)
+                        </option>
+                        {users.map((user) => (
+                          <option key={user.userId} value={user.userId}>
+                            {`${user.firstName}`}
+                          </option>
+                        ))}
                       </select>
                     </label>
                   </div>
@@ -291,7 +351,9 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({
                       <input
                         type="date"
                         id="startDate"
-                        name="startDate"
+                        name="expeditionStartDate"
+                        value={searchParams.expeditionStartDate || ""}
+                        onChange={handleInputChange}
                         className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                       ></input>
                     </label>
@@ -304,12 +366,12 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({
                       <input
                         type="date"
                         id="endDate"
-                        name="endDate"
+                        name="expeditionEndDate"
+                        value={searchParams.expeditionEndDate || ""}
+                        onChange={handleInputChange}
                         className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                       ></input>
                     </label>
-
-                    
                   </div>
                   <div className="flex">
                     <div className="flex-1 flex flex-col p-4 ">
@@ -321,8 +383,10 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({
                           Sequence Number:
                           <input
                             id="SequenceNumberSearch"
+                            name="expeditionSequenceNumber"
+                            value={searchParams.expeditionSequenceNumber || ""}
+                            onChange={handleInputChange}
                             className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            name="SequenceNumberSearch"
                             type="string"
                           ></input>
                         </label>
@@ -335,12 +399,16 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({
                           Status(Objective Met):
                           <select
                             id="status"
+                            name="sciObjectivesMet"
+                            value={
+                              searchParams.sciObjectivesMet?.toString() || ""
+                            }
+                            onChange={handleSelectChange}
                             className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            
                           >
                             <option value="">(Select One)</option>
-                            <option value="1">Complete</option>
-                            <option value="2">Incomplete</option>
+                            <option value="true">Complete</option>
+                            <option value="false">Incomplete</option>
                           </select>
                         </label>
                       </div>
@@ -369,79 +437,91 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({
                           Status(Equipment Functioned):
                           <select
                             id="status"
+                            name="allEquipmentFurnctioned"
+                            value={
+                              searchParams.allEquipmentFunctioned?.toString() ||
+                              ""
+                            }
+                            onChange={handleSelectChange}
                             className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            
                           >
                             <option value="">(Select One)</option>
-                            <option value="1">Complete</option>
-                            <option value="2">Incomplete</option>
+                            <option value="true">Complete</option>
+                            <option value="false">Incomplete</option>
                           </select>
                         </label>
                       </div>
-                    </div> 
+                    </div>
                   </div>
                   <div className="flex flex-row">
-                  <label
+                    <label
                       htmlFor="chiefScientist"
                       className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4"
                     >
                       Dive Chief Scientist ID:
                       <select
                         id="chiefScientist"
+                        name="diveChiefScientistId"
+                        value={searchParams.diveChiefScientistId || ""}
+                        onChange={handleDiveScientistChange}
                         className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                        
                       >
-                        <option value="">(Select One)</option>
-                        <option value="1">Scientist 1</option>
-                        <option value="2">Scientist 2</option>
-                        <option value="3">Scientist 3</option>
+                        <option value="">(Select Dive Scientist)</option>
+                        {users.map((user) => (
+                          <option key={user.userId} value={user.userId}>
+                            {`${user.firstName}`}
+                          </option>
+                        ))}
                       </select>
                     </label>
                     <label
-                          htmlFor="SequenceNumberSearch"
-                          className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4 "
-                        >
-                          Dive Number:
-                          <input
-                            id="SequenceNumberSearch"
-                            className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            name="SequenceNumberSearch"
-                            type="string"
-                          ></input>
-                        </label>
-                    
+                      htmlFor="SequenceNumberSearch"
+                      className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4 "
+                    >
+                      Dive Number:
+                      <input
+                        id="diveNumber"
+                        name="diveNumber"
+                        className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                        value={searchParams.diveNumber || ""}
+                        onChange={handleInputChange}
+                        type="string"
+                      ></input>
+                    </label>
                   </div>
-                
                 </div>
               </div>
               <div className="flex flex-wrap">
-              <label
-                      htmlFor="diveStartDate"
-                      className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
-                    >
-                      Dive Start Time:
-                      <input
-                        type="date"
-                        id="startDate"
-                        name="startDate"
-                        className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
-                      ></input>
-                    </label>
+                <label
+                  htmlFor="diveStartDate"
+                  className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
+                >
+                  Dive Start Time:
+                  <input
+                    type="date"
+                    id="diveStartDate"
+                    name="divestartDate"
+                    value={searchParams.diveStartDate || ""}
+                    onChange={handleInputChange}
+                    className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
+                  ></input>
+                </label>
 
-                    <label
-                      htmlFor="diveEndDate"
-                      className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
-                    >
-                      Dive End Time:
-                      <input
-                        type="date"
-                        id="endDate"
-                        name="endDate"
-                        className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
-                      ></input>
-                    </label>
+                <label
+                  htmlFor="diveEndDate"
+                  className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
+                >
+                  Dive End Time:
+                  <input
+                    type="date"
+                    id="diveEndDate"
+                    name="diveEndDate"
+                    value={searchParams.diveEndDate || ""}
+                    onChange={handleInputChange}
+                    className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
+                  ></input>
+                </label>
 
-              
                 <div className="w-full pb-4">
                   <label
                     htmlFor="keywordSearch"
@@ -450,8 +530,10 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({
                     Key-word or Phrase
                   </label>
                   <textarea
-                    id="keywordSearch"
-                    name="keywordSearch"
+                    id="keyword"
+                    name="keyword"
+                    value={searchParams.keyword || ""}
+                    onChange={handleTextareaChange}
                     className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                     rows={3}
                     cols={30}
@@ -461,11 +543,14 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({
               </div>
 
               <div className="flex flex-wrap">
-              {/* This creates a flexible space */}
-              <BackButton hrefLink="/PageSelect" buttonName="Back" />
-              <div className="flex-1"></div>{" "}
-              <button onClick={executeSearch}>Search</button>
-            </div>
+                {/* This creates a flexible space */}
+                <BackButton hrefLink="/PageSelect" buttonName="Back" />
+                <div className="flex-1"></div>{" "}
+                <button onClick={executeSearch}>Search</button>
+              </div>
+              <div className="search-results-container">
+                {renderSearchResults()}
+              </div>
             </form>
           </div>
         </div>
