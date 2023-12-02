@@ -3,6 +3,8 @@ import Navbar from '../../components/Navbar'
 import BackButton from '../../components/BackButton'
 import { useRouter } from 'next/router'
 import { GetServerSideProps } from 'next'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const scientistsResponse = await fetch(
@@ -24,19 +26,36 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   }
 }
+
 interface Scientist {
   userId: number
   firstName: string
   lastName: string
 }
+
 interface ScientistProps {
   scientists: Scientist[]
 }
+
 const Dives: React.FC<ScientistProps> = ({ scientists }) => {
   const router = useRouter()
   const expeditionId = router.query.expeditionId
   const [rovName, setRovName] = useState('')
   const [diveNumber, setDiveNumber] = useState('')
+  const [diveTimeStart, setDiveTimeStart] = useState('')
+  const [diveTimeEnd, setDiveTimeEnd] = useState('')
+  const [chiefScientist, setChiefScientist] = useState('')
+  const [accomplishments, setAccomplishments] = useState('')
+
+  const resetForm = () => {
+    setRovName('')
+    setDiveNumber('')
+    setDiveTimeStart('')
+    setDiveTimeEnd('')
+    setChiefScientist('')
+    setAccomplishments('')
+  }
+
   const handleSubmit = async (event: any) => {
     event.preventDefault()
 
@@ -44,10 +63,10 @@ const Dives: React.FC<ScientistProps> = ({ scientists }) => {
       expeditionId: expeditionId,
       rovName: rovName,
       diveNumber: diveNumber,
-      diveStartDatetime: event.target.diveTimeStart.value,
-      diveEndDatetime: event.target.diveTimeEnd.value,
-      diveChiefScientistId: parseInt(event.target.chiefScientist.value, 10),
-      briefAccomplishments: event.target.acomplishments.value,
+      diveStartDatetime: diveTimeStart,
+      diveEndDatetime: diveTimeEnd,
+      diveChiefScientistId: parseInt(chiefScientist, 10),
+      briefAccomplishments: accomplishments,
     }
 
     const response = await fetch('http://localhost:8080/api/v1.1/rovDive', {
@@ -60,21 +79,22 @@ const Dives: React.FC<ScientistProps> = ({ scientists }) => {
     })
 
     if (!response.ok) {
-      console.error('Failed to add dive')
+      toast.error('Failed to submit the form.')
     } else {
-      console.log('Dive added successfully')
+      resetForm()
+      toast.success('Form submitted successfully.')
     }
   }
 
   return (
-    <div className="h-screen  overflow-y-auto ">
+    <div className="h-screen overflow-y-auto">
       <Navbar currentPage="precruise" className="sticky top-0 z-10" />
       <div className="bg-custom-blue flex flex-col items-center justify-center font-sans text-cyan-900 pt-24">
+        <ToastContainer position="top-center" />
         <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl">
           <h1 className="mb-2 text-2xl text-center text-cyan-900 font-bold">
             Dive Form
           </h1>
-
           <p className="mb-4 text-sm text-center italic">
             Please fill out all the information below in order to add a dive to
             this cruise.
@@ -89,7 +109,7 @@ const Dives: React.FC<ScientistProps> = ({ scientists }) => {
                 type="text"
                 id="rovName"
                 value={rovName}
-                onChange={(e: any) => setRovName(e.target.value)}
+                onChange={(e) => setRovName(e.target.value)}
                 className="border rounded-md ml-2 p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                 required
               />
@@ -103,36 +123,44 @@ const Dives: React.FC<ScientistProps> = ({ scientists }) => {
                 type="text"
                 id="diveNumber"
                 value={diveNumber}
-                onChange={(e: any) => setDiveNumber(e.target.value)}
+                onChange={(e) => setDiveNumber(e.target.value)}
                 className="border rounded-md ml-2 p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                 required
               />
             </label>
-            <p className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2">
-              Time of Dive:
-            </p>
-            <label
-              htmlFor="diveTime"
-              className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
-            >
-              Start
-              <input
-                type="datetime-local"
-                id="diveTimeStart"
-                name="diveTimeStart"
-                className="ml-2 w-60 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
-                required
-              ></input>
-              <span className="ml-4">End</span>
-              <input
-                type="datetime-local"
-                id="diveTimeEnd"
-                className="ml-2 w-60 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
-                name="diveTimeEnd"
-                required
-              ></input>
-            </label>
-            ​
+            <div className="mb-4">
+              <p className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2">
+                Time of Dive:
+              </p>
+              <label
+                htmlFor="diveTimeStart"
+                className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
+              >
+                Start
+                <input
+                  type="datetime-local"
+                  id="diveTimeStart"
+                  value={diveTimeStart}
+                  onChange={(e) => setDiveTimeStart(e.target.value)}
+                  className="ml-2 w-60 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
+                  required
+                />
+              </label>
+              <label
+                htmlFor="diveTimeEnd"
+                className="block uppercase tracking-wide text-cyan-900 text-md font-bold"
+              >
+                End
+                <input
+                  type="datetime-local"
+                  id="diveTimeEnd"
+                  value={diveTimeEnd}
+                  onChange={(e) => setDiveTimeEnd(e.target.value)}
+                  className="ml-2 w-60 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
+                  required
+                />
+              </label>
+            </div>
             <label
               htmlFor="chiefScientist"
               className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
@@ -140,19 +168,19 @@ const Dives: React.FC<ScientistProps> = ({ scientists }) => {
               Dive Chief Scientist:
               <select
                 id="chiefScientist"
+                value={chiefScientist}
+                onChange={(e) => setChiefScientist(e.target.value)}
                 className="border rounded-md ml-2"
                 required
               >
                 <option value="">(Select One)</option>
-                {scientists &&
-                  scientists.map((scientist) => (
-                    <option key={scientist.userId} value={scientist.userId}>
-                      {scientist.firstName} {scientist.lastName}
-                    </option>
-                  ))}
+                {scientists.map((scientist) => (
+                  <option key={scientist.userId} value={scientist.userId}>
+                    {scientist.firstName} {scientist.lastName}
+                  </option>
+                ))}
               </select>
             </label>
-            ​
             <label
               htmlFor="acomplishments"
               className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
@@ -161,20 +189,17 @@ const Dives: React.FC<ScientistProps> = ({ scientists }) => {
               <textarea
                 id="acomplishments"
                 name="acomplishments"
+                value={accomplishments}
+                onChange={(e) => setAccomplishments(e.target.value)}
                 className="w-full border max-h-[100px] rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                 rows={3}
                 cols={30}
-                placeholder="A brief explination of what was accomplished on this dive."
+                placeholder="A brief explanation of what was accomplished on this dive."
               ></textarea>
             </label>
-            {/* <!-- Save the user ID when they add a dive --> */}
-            {/* <label htmlFor="diveNumber">ID of who added expedition to database:
-          <input id="diveNumber" name="diveNumber" type="number"></input>
-        </label> */}
             <div className="flex flex-wrap">
-              {/* This creates a flexible space */}
               <BackButton hrefLink="/SelectPostCruise" buttonName="Back" />
-              <div className="flex-1"></div>{' '}
+              <div className="flex-1"></div>
               <input
                 type="submit"
                 className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
