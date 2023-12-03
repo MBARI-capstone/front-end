@@ -29,7 +29,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
           aria-label="Global"
         >
           <div className="flex lg:flex-1">
-            <Link href="/" className="-m-1.5 p-1.5">
+            <Link href="PageSelect" className="-m-1.5 p-1.5">
               <span className="sr-only">Your Company</span>
               <div
                 className="absolute top-0 left-0 h-40 w-auto md:block hidden"
@@ -66,7 +66,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
               href={
                 currentPage === 'postcruise'
                   ? '/PreCruiseForm'
-                  : '/PostCruiseForm'
+                  : '/PostCruise'
               }
               className="text-sm font-semibold leading-6 text-gray-900"
             >
@@ -79,7 +79,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
               Reports
             </Link>
             <Link
-              href="/DiveSearch"
+              href="/SelectPostCruise"
               className="text-sm font-semibold leading-6 text-gray-900"
             >
               Dives
@@ -131,9 +131,9 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
                     href={
                       currentPage === 'postcruise'
                         ? '/PreCruiseForm'
-                        : '/PostCruiseForm'
+                        : '/PostCruise'
                     }
-                    className="text-sm font-semibold leading-6 text-gray-900"
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
                     {currentPage === 'postcruise'
                       ? 'Pre-Cruise'
@@ -147,7 +147,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, className }) => {
                     Reports
                   </Link>
                   <Link
-                    href="/DiveSearch"
+                    href="/SelectPostCruise"
                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
                     Dives
