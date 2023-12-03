@@ -1,254 +1,341 @@
-import { useState, SetStateAction } from "react";
-import Navbar from "../components/Navbar";
-import BackButton from "../components/BackButton";
-import { GetServerSideProps } from "next";
+import { useState, SetStateAction } from 'react'
+import Navbar from '../components/Navbar'
+import BackButton from '../components/BackButton'
+import { GetServerSideProps } from 'next'
 
 interface Ship {
-  shipId: number;
-  shipName: string;
-  shipDescription?: string;
+  shipId: number
+  shipName: string
+  shipDescription?: string
 }
 
 interface User {
-  userId: number;
-  firstName: string;
-  lastName: string;
+  userId: number
+  firstName: string
+  lastName: string
 }
 
 interface ShipandUserprops {
-  ships: Ship[];
-  users: User[];
-  error?: string;
+  ships: Ship[]
+  users: User[]
+  error?: string
 }
 
-interface SearchParams {
-  shipId: number | null;
-  expeditionChiefScientistId: number | null;
-  principalInvestigatorId: number | null;
-  expeditionStartDate: string | null;
-  expeditionEndDate: string | null;
-  expeditionSequenceNumber: number | null;
-  sciObjectivesMet: boolean | null;
-  allEquipmentFunctioned: boolean | null;
-  diveNumber: string | null;
-  diveChiefScientistId: number | null;
-  diveStartDate: string | null;
-  diveEndDate: string | null;
-  keyword: string | null;
+interface RovDive {
+  rovName: string
+  diveNumber: string
+  diveStartDatetime: string
+  diveEndDatetime: string
+  diveChiefScientistName: string
+}
+
+interface SearchResults {
+  accomplishments: string
+  actualEndDate: string
+  actualStartDate: string
+  allEquipmentFunctioned: boolean
+  equipmentDescription: string
+  expeditionChiefScientistName: string
+  expeditionId: number
+  isPreApproved: boolean | null
+  operatorComments: string
+  otherComments: string
+  participants: string
+  plannedTrackDescription: string
+  principalInvestigatorName: string
+  purpose: string
+  regionDescription: string
+  rovDives: RovDive[]
+  scheduledEndDate: string
+  scheduledStartDate: string
+  sciObjectivesMet: boolean
+  scientistComments: string
+  shipName: string
+  updatedByUserName: string
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // Fetch your ships data here
   try {
     const shipsRes = await fetch(
-      "http://localhost:8080/api/v1.1/data/allShips",
+      'http://localhost:8080/api/v1.1/data/allShips',
       {
-        credentials: "include",
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
-          Cookie: context.req.headers.cookie || "",
+          'Content-Type': 'application/json',
+          Cookie: context.req.headers.cookie || '',
         },
       }
-    );
+    )
 
     if (!shipsRes.ok) {
-      throw new Error(`Error: ${shipsRes.status}`);
+      throw new Error(`Error: ${shipsRes.status}`)
     }
-    const ships = await shipsRes.json();
-    console.log(ships);
+    const ships = await shipsRes.json()
+    console.log(ships)
 
     const registeredUsersRes = await fetch(
-      "http://localhost:8080/api/v1.1/data/allUsers",
+      'http://localhost:8080/api/v1.1/data/allUsers',
       {
-        credentials: "include",
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
-          Cookie: context.req.headers.cookie || "",
+          'Content-Type': 'application/json',
+          Cookie: context.req.headers.cookie || '',
         },
       }
-    );
+    )
     if (!registeredUsersRes.ok) {
-      throw new Error(`Error: ${registeredUsersRes.status}`);
+      throw new Error(`Error: ${registeredUsersRes.status}`)
     }
-    const users = await registeredUsersRes.json();
-    console.log(users);
+    const users = await registeredUsersRes.json()
+    console.log(users)
 
     return {
       props: {
         ships,
         users,
       },
-    };
+    }
   } catch (error: any) {
     // In case of an error, you can return an error prop, or you can choose to handle it differently
-    return { props: { error: error.message } };
+    return { props: { error: error.message } }
   }
-};
+}
 
 const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
-  const [selectedShipId, setSelectedShipId] = useState<number | undefined>();
-  const [selectedUserId, setSelectedUserId] = useState<number | undefined>();
-  const [selectPrincipleID, setPrincipleId] = useState<number | undefined>();
-  const [selectDiveChiefScientistId, setDiveChiefId] = useState<
-    number | undefined
-  >();
-  // State to hold the search parameters
-  const [searchParams, setSearchParams] = useState<SearchParams>({
-    shipId: null,
-    expeditionChiefScientistId: null,
-    principalInvestigatorId: null,
-    expeditionStartDate: null,
-    expeditionEndDate: null,
-    expeditionSequenceNumber: null,
-    sciObjectivesMet: null,
-    allEquipmentFunctioned: null,
-    diveNumber: null,
-    diveChiefScientistId: null,
-    diveStartDate: null,
-    diveEndDate: null,
-    keyword: null,
-  });
+  const [shipId, setShipId] = useState<number | null>(null)
+  const [expeditionChiefScientistId, setExpeditionChiefScientistId] = useState<
+    number | null
+  >(null)
+  const [principalInvestigatorId, setPrincipalInvestigatorId] = useState<
+    number | null
+  >(null)
+  const [expeditionStartDate, setExpeditionStartDate] = useState<string | null>(
+    null
+  )
+  const [expeditionEndDate, setExpeditionEndDate] = useState<string | null>(
+    null
+  )
+  const [expeditionSequenceNumber, setExpeditionSequenceNumber] = useState<
+    number | null
+  >(null)
+  const [sciObjectivesMet, setSciObjectivesMet] = useState<boolean | null>(null)
+  const [allEquipmentFunctioned, setAllEquipmentFunctioned] = useState<
+    boolean | null
+  >(null)
+  const [diveNumber, setDiveNumber] = useState<string | null>(null)
+  const [diveChiefScientistId, setDiveChiefScientistId] = useState<
+    number | null
+  >(null)
+  const [diveStartDate, setDiveStartDate] = useState<string | null>(null)
+  const [diveEndDate, setDiveEndDate] = useState<string | null>(null)
+  const [keyword, setKeyword] = useState<string | null>(null)
 
   //State to hold the search results
-  const [searchResults, setSearchResults] = useState<SearchParams[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchResults[]>([])
 
   //Function to handle input changes and update search parameters
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setSearchParams((prevParams) => ({
-      ...prevParams,
-      [name]: value,
-    }));
-  };
+    const { name, value } = e.target
+    switch (name) {
+      case 'expeditionStartDate':
+        setExpeditionStartDate(value)
+        break
+      case 'expeditionEndDate':
+        setExpeditionEndDate(value)
+        break
+      case 'expeditionSequenceNumber':
+        setExpeditionSequenceNumber(value ? parseInt(value, 10) : null)
+        break
+      case 'sciObjectivesMet':
+        setSciObjectivesMet(value === 'true')
+        break
+      case 'allEquipmentFunctioned':
+        setAllEquipmentFunctioned(value === 'true')
+        break
+      case 'diveNumber':
+        setDiveNumber(value)
+        break
+      case 'diveStartDate':
+        setDiveStartDate(value)
+        break
+      case 'diveEndDate':
+        setDiveEndDate(value)
+        break
+      case 'keyword':
+        setKeyword(value)
+        break
+      default:
+        break
+    }
+  }
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setSearchParams((prevParams) => ({
-      ...prevParams,
-      [name]: value,
-    }));
-  };
+    const { name, value } = e.target
+    switch (name) {
+      case 'shipName':
+        setShipId(value ? parseInt(value, 10) : null)
+        break
+      case 'chiefScientist':
+        setExpeditionChiefScientistId(value ? parseInt(value, 10) : null)
+        break
+      case 'principalInvestigator':
+        setPrincipalInvestigatorId(value ? parseInt(value, 10) : null)
+        break
+      case 'diveChiefScientist':
+        setDiveChiefScientistId(value ? parseInt(value, 10) : null)
+        break
+      case 'sciObjectivesMet':
+        setSciObjectivesMet(value === 'true')
+        break
+      case 'allEquipmentFunctioned':
+        setAllEquipmentFunctioned(value === 'true')
+        break
+      default:
+        break
+    }
+  }
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    switch (name) {
+      case 'keyword':
+        setKeyword(value)
+        break
+      default:
+        break
+    }
+  }
 
   // Function to execute the search
-  const executeSearch = async (event: { preventDefault: () => void; }) => {
-    event.preventDefault();
+  const executeSearch = async (event: { preventDefault: () => void }) => {
+    event.preventDefault()
+    const searchParams = {
+      shipId: shipId,
+      expeditionChiefScientistId: expeditionChiefScientistId,
+      principalInvestigatorId: principalInvestigatorId,
+      expeditionStartDate: expeditionStartDate,
+      expeditionEndDate: expeditionEndDate,
+      expeditionSequenceNumber: expeditionSequenceNumber,
+      sciObjectivesMet: sciObjectivesMet,
+      allEquipmentFunctioned: allEquipmentFunctioned,
+      diveNumber: diveNumber,
+      diveChiefScientistId: diveChiefScientistId,
+      diveStartDate: diveStartDate,
+      diveEndDate: diveEndDate,
+      keyword: keyword,
+    }
+
+    console.log('search parameter: ', searchParams)
     try {
-      const response = await fetch("http://localhost:8080/api/v1.1/search", {
-        method: "POST",
+      const response = await fetch('http://localhost:8080/api/v1.1/search', {
+        credentials: 'include',
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(searchParams),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const data = await response.json();
-      setSearchResults(data);
+      const data = await response.json()
+      console.log(data)
+      setSearchResults(data)
     } catch (error) {
-      console.error("Failed to search:", error);
+      console.error('Failed to search:', error)
     }
-  };
+  }
 
-  const filterResults = () => {
-    return searchResults.filter((result) => {
-      return (
-        (searchParams.shipId === null ||
-          result.shipId === searchParams.shipId) &&
-        (searchParams.expeditionChiefScientistId === null ||
-          result.expeditionChiefScientistId ===
-            searchParams.expeditionChiefScientistId) &&
-        (searchParams.principalInvestigatorId === null ||
-          result.principalInvestigatorId ===
-            searchParams.principalInvestigatorId) &&
-        (searchParams.expeditionStartDate === null ||
-          result.expeditionStartDate === searchParams.expeditionStartDate) &&
-        (searchParams.expeditionEndDate === null ||
-          result.expeditionEndDate === searchParams.expeditionEndDate) &&
-        (searchParams.expeditionSequenceNumber === null ||
-          result.expeditionSequenceNumber ==
-            searchParams.expeditionSequenceNumber) &&
-        (searchParams.sciObjectivesMet === null ||
-          result.sciObjectivesMet === searchParams.sciObjectivesMet) &&
-        (searchParams.allEquipmentFunctioned === null ||
-          result.allEquipmentFunctioned ===
-            searchParams.allEquipmentFunctioned) &&
-        (searchParams.diveNumber === null ||
-          result.diveNumber === searchParams.diveNumber) &&
-        (searchParams.diveChiefScientistId === null ||
-          result.diveChiefScientistId === searchParams.diveChiefScientistId) &&
-        (searchParams.diveStartDate === null ||
-          result.diveStartDate === searchParams.diveStartDate) &&
-        (searchParams.diveEndDate === null ||
-          result.diveEndDate === searchParams.diveEndDate) &&
-        (searchParams.keyword === null ||
-          result.keyword === searchParams.keyword)
-      );
-    });
-  };
+  const [openExpeditionId, setOpenExpeditionId] = useState<number | null>(null)
+  const [openRovDiveIds, setOpenRovDiveIds] = useState<Set<string>>(new Set())
+
+  const toggleExpedition = (expeditionId: number) => {
+    setOpenExpeditionId(openExpeditionId === expeditionId ? null : expeditionId)
+  }
+
+  const toggleRovDive = (expeditionId: number, diveIndex: number) => {
+    const key = `${expeditionId}-${diveIndex}`
+    const newOpenRovDiveIds = new Set(openRovDiveIds)
+    if (newOpenRovDiveIds.has(key)) {
+      newOpenRovDiveIds.delete(key)
+    } else {
+      newOpenRovDiveIds.add(key)
+    }
+    setOpenRovDiveIds(newOpenRovDiveIds)
+  }
 
   const renderSearchResults = () => {
-    const filteredResults = filterResults();
-
-    if (filteredResults.length === 0) {
-      return <p> No Matching Results</p>;
+    if (searchResults.length === 0) {
+      return <p> No Matching Results</p>
     }
 
-    return filteredResults.map((result, index) => (
-      <div key={index} className="result-item">
-         <p>Ship ID: {result.shipId}</p>
-      <p>Expedition Chief Scientist ID: {result.expeditionChiefScientistId}</p>
-      <p>Principal Investigator ID: {result.principalInvestigatorId}</p>
-      <p>Expedition Start Date: {result.expeditionStartDate}</p>
-      <p>Expedition End Date: {result.expeditionEndDate}</p>
-      <p>Expedition Sequence Number: {result.expeditionSequenceNumber}</p>
-      <p>Scientific Objectives Met: {result.sciObjectivesMet ? "Yes" : "No"}</p>
-      <p>All Equipment Functioned: {result.allEquipmentFunctioned ? "Yes" : "No"}</p>
-      <p>Dive Number: {result.diveNumber}</p>
-      <p>Dive Chief Scientist ID: {result.diveChiefScientistId}</p>
-      <p>Dive Start Date: {result.diveStartDate}</p>
-      <p>Dive End Date: {result.diveEndDate}</p>
-      <p>Keyword: {result.keyword}</p>
+    return (
+      <div>
+        {searchResults.map((result: SearchResults) => (
+          <div key={result.expeditionId} className="mb-4">
+            <div
+              onClick={() => toggleExpedition(result.expeditionId)}
+              className="cursor-pointer font-bold text-lg"
+            >
+              {result.shipName} ({result.actualStartDate} -{' '}
+              {result.actualEndDate})
+              {openExpeditionId === result.expeditionId ? ' ↓' : ' →'}
+            </div>
+            {openExpeditionId === result.expeditionId && (
+              <div className="pl-4 border-l-2 border-gray-300">
+                <p>Purpose: {result.purpose}</p>
+                <p>Chief Scientist: {result.expeditionChiefScientistName}</p>
+                <p>
+                  Principal Investigator: {result.principalInvestigatorName}
+                </p>
+                <p>Start Date: {result.actualStartDate}</p>
+                <p>End Date: {result.actualEndDate}</p>
+                <p>Region: {result.regionDescription}</p>
+                <p>Equipment: {result.equipmentDescription}</p>
+                <p>Participants: {result.participants}</p>
+                <p>Accomplishments: {result.accomplishments}</p>
+                <h2 className="font-semibold text-md mt-2">Dives:</h2>
+                <div className="mt-2">
+                  {result.rovDives.map((dive, index) => (
+                    <div key={index} className="mb-2">
+                      <div
+                        onClick={() =>
+                          toggleRovDive(result.expeditionId, index)
+                        }
+                        className="cursor-pointer pl-4 border-l-2 border-gray-200"
+                      >
+                        <span className="font-semibold">{dive.rovName}</span> (
+                        {dive.diveStartDatetime} - {dive.diveEndDatetime}){' '}
+                        {openRovDiveIds.has(`${result.expeditionId}-${index}`)
+                          ? ' ↓'
+                          : ' →'}
+                      </div>
+                      {openRovDiveIds.has(
+                        `${result.expeditionId}-${index}`
+                      ) && (
+                        <div className="pl-8">
+                          <p>
+                            Dive Chief Scientist: {dive.diveChiefScientistName}
+                          </p>
+                          <p>Dive Number: {dive.diveNumber}</p>
+                          <p>Start Date/Time: {dive.diveStartDatetime}</p>
+                          <p>End Date/Time: {dive.diveEndDatetime}</p>
 
-        {/* Render your search result items here */}
-        
+                          <p>ROV Name: {dive.rovName}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
-    ));
-  };
-
-  const handleShipChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const shipId = parseInt(event.target.value, 10);
-    setSelectedShipId(shipId);
-  };
-
-  const handleUserChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const userId = parseInt(event.target.value, 10);
-    setSelectedUserId(userId);
-  };
-
-  const handlePrincipleChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const userId = parseInt(event.target.value, 10);
-    setPrincipleId(userId);
-  };
-
-  const handleDiveScientistChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const userId = parseInt(event.target.value, 10);
-    setDiveChiefId(userId);
-  };
-
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setSearchParams((prevParams) => ({
-      ...prevParams,
-      [name]: value,
-    }));
-  };
+    )
+  }
 
   return (
     <main>
@@ -283,8 +370,8 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                       <select
                         id="shipName"
                         name="shipName"
-                        onChange={handleShipChange}
-                        value={selectedShipId || ""}
+                        onChange={handleSelectChange}
+                        value={shipId || ''}
                         className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                       >
                         <option value="">(Select a Ship)</option>
@@ -305,8 +392,8 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                       <select
                         id="chiefScientist"
                         name="chiefScientist"
-                        onChange={handleUserChange}
-                        value={selectedUserId || ""}
+                        onChange={handleSelectChange}
+                        value={expeditionChiefScientistId || ''}
                         className="block appearance-none w-full bg-white border border-gray-400  hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                       >
                         <option value="">(Select Chief Scientist)</option>
@@ -326,8 +413,8 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                       <select
                         id="principalInvestigator"
                         name="principleInvestigator"
-                        onChange={handlePrincipleChange}
-                        value={selectPrincipleID || ""}
+                        onChange={handleSelectChange}
+                        value={principalInvestigatorId || ''}
                         className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                       >
                         <option value="">
@@ -352,7 +439,7 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                         type="date"
                         id="startDate"
                         name="expeditionStartDate"
-                        value={searchParams.expeditionStartDate || ""}
+                        value={expeditionStartDate || ''}
                         onChange={handleInputChange}
                         className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                       ></input>
@@ -367,7 +454,7 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                         type="date"
                         id="endDate"
                         name="expeditionEndDate"
-                        value={searchParams.expeditionEndDate || ""}
+                        value={expeditionEndDate || ''}
                         onChange={handleInputChange}
                         className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                       ></input>
@@ -384,7 +471,7 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                           <input
                             id="SequenceNumberSearch"
                             name="expeditionSequenceNumber"
-                            value={searchParams.expeditionSequenceNumber || ""}
+                            value={expeditionSequenceNumber || ''}
                             onChange={handleInputChange}
                             className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                             type="string"
@@ -400,9 +487,7 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                           <select
                             id="status"
                             name="sciObjectivesMet"
-                            value={
-                              searchParams.sciObjectivesMet?.toString() || ""
-                            }
+                            value={sciObjectivesMet?.toString() || ''}
                             onChange={handleSelectChange}
                             className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                           >
@@ -417,31 +502,14 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                     <div className="flex-1 flex flex-col p-4 ">
                       <div>
                         <label
-                          htmlFor="yyyyddd"
-                          className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
-                        >
-                          YYYYDDD:
-                          <input
-                            id="SequenceNumberSearch"
-                            className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            name="SequenceNumberSearch"
-                            type="string"
-                          ></input>
-                        </label>
-                      </div>
-                      <div>
-                        <label
                           htmlFor="status"
                           className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
                         >
                           Status(Equipment Functioned):
                           <select
                             id="status"
-                            name="allEquipmentFurnctioned"
-                            value={
-                              searchParams.allEquipmentFunctioned?.toString() ||
-                              ""
-                            }
+                            name="allEquipmentFunctioned"
+                            value={allEquipmentFunctioned?.toString() || ''}
                             onChange={handleSelectChange}
                             className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                           >
@@ -462,8 +530,8 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                       <select
                         id="chiefScientist"
                         name="diveChiefScientistId"
-                        value={searchParams.diveChiefScientistId || ""}
-                        onChange={handleDiveScientistChange}
+                        value={diveChiefScientistId || ''}
+                        onChange={handleSelectChange}
                         className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                       >
                         <option value="">(Select Dive Scientist)</option>
@@ -483,7 +551,7 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                         id="diveNumber"
                         name="diveNumber"
                         className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                        value={searchParams.diveNumber || ""}
+                        value={diveNumber || ''}
                         onChange={handleInputChange}
                         type="string"
                       ></input>
@@ -501,7 +569,7 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                     type="date"
                     id="diveStartDate"
                     name="divestartDate"
-                    value={searchParams.diveStartDate || ""}
+                    value={diveStartDate || ''}
                     onChange={handleInputChange}
                     className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                   ></input>
@@ -516,7 +584,7 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                     type="date"
                     id="diveEndDate"
                     name="diveEndDate"
-                    value={searchParams.diveEndDate || ""}
+                    value={diveEndDate || ''}
                     onChange={handleInputChange}
                     className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                   ></input>
@@ -532,7 +600,7 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                   <textarea
                     id="keyword"
                     name="keyword"
-                    value={searchParams.keyword || ""}
+                    value={keyword || ''}
                     onChange={handleTextareaChange}
                     className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                     rows={3}
@@ -545,7 +613,7 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
               <div className="flex flex-wrap">
                 {/* This creates a flexible space */}
                 <BackButton hrefLink="/PageSelect" buttonName="Back" />
-                <div className="flex-1"></div>{" "}
+                <div className="flex-1"></div>{' '}
                 <button onClick={executeSearch}>Search</button>
               </div>
               <div className="search-results-container">
@@ -556,7 +624,7 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
         </div>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default ReportsSearch;
+export default ReportsSearch
