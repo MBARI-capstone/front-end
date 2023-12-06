@@ -10,6 +10,8 @@ import {
   Precruise,
   ReportsSearch,
   DiveSearch,
+  ApprovePrecruise,
+  Dive,
 } from '../components/Page'
 import { fetchUserRole } from '../api/hooks/fetchUserRole'
 import { GetServerSideProps } from 'next'
@@ -47,6 +49,7 @@ export default function PageSelect({ userRole }: PageSelectProps) {
         <Precruise />
         <Postcruise />
         <DiveSearch />
+        <ApprovePrecruise />
         {/* <button onClick="window.location.href='';">Add Dives</button> */}
         <ReportsSearch />
         <Logout />
@@ -74,7 +77,9 @@ export default function PageSelect({ userRole }: PageSelectProps) {
     return (
       <div className="flex flex-col items-center space-y-4">
         <Precruise />
+        <ApprovePrecruise />
         <Postcruise />
+        <Dive />
         {/* <button onClick="window.location.href='';">Add Dives</button> */}
         <ReportsSearch />
         <Logout />

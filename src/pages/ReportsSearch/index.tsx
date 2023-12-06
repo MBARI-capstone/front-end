@@ -1,129 +1,342 @@
-import { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import BackButton from "../components/BackButton";
+import { useState, SetStateAction } from 'react'
+import Navbar from '../components/Navbar'
+import BackButton from '../components/BackButton'
+import { GetServerSideProps } from 'next'
 
 interface Ship {
-  shipId: number;
-  shipName: string;
-  shipDescription?: string;
+  shipId: number
+  shipName: string
+  shipDescription?: string
 }
 
+interface User {
+  userId: number
+  firstName: string
+  lastName: string
+}
 
+interface ShipandUserprops {
+  ships: Ship[]
+  users: User[]
+  error?: string
+}
 
-function ShipSelector({ onShipSelected }) {
-  // State to store Ship data 
-  const [ships, setShips] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+interface RovDive {
+  rovName: string
+  diveNumber: string
+  diveStartDatetime: string
+  diveEndDatetime: string
+  diveChiefScientistName: string
+}
 
-  useEffect(() => {
-    async function fetchShips() {
-      setIsLoading(true);
-      try {
-        const response = await fetch('http://localhost:8080/api/v1.1/data/allShips');
-        const data = await response.json();
-        setShips(data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching ships:', error);
-        setIsLoading(false);
+interface SearchResults {
+  accomplishments: string
+  actualEndDate: string
+  actualStartDate: string
+  allEquipmentFunctioned: boolean
+  equipmentDescription: string
+  expeditionChiefScientistName: string
+  expeditionId: number
+  isPreApproved: boolean | null
+  operatorComments: string
+  otherComments: string
+  participants: string
+  plannedTrackDescription: string
+  principalInvestigatorName: string
+  purpose: string
+  regionDescription: string
+  rovDives: RovDive[]
+  scheduledEndDate: string
+  scheduledStartDate: string
+  sciObjectivesMet: boolean
+  scientistComments: string
+  shipName: string
+  updatedByUserName: string
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  // Fetch your ships data here
+  try {
+    const shipsRes = await fetch(
+      'http://localhost:8080/api/v1.1/data/allShips',
+      {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: context.req.headers.cookie || '',
+        },
       }
+    )
+
+    if (!shipsRes.ok) {
+      throw new Error(`Error: ${shipsRes.status}`)
     }
+    const ships = await shipsRes.json()
+    console.log(ships)
 
-    fetchShips();
-  }, []);
+    const registeredUsersRes = await fetch(
+      'http://localhost:8080/api/v1.1/data/allUsers',
+      {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: context.req.headers.cookie || '',
+        },
+      }
+    )
+    if (!registeredUsersRes.ok) {
+      throw new Error(`Error: ${registeredUsersRes.status}`)
+    }
+    const users = await registeredUsersRes.json()
+    console.log(users)
 
-
-  if (isLoading) return <p>Loading...</p>;
-
-  return (
-    <select
-      id="shipName"
-      name="shipName"
-      className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-      required
-      onChange={onShipSelected}
-    >
-      <option value="">(Select One)</option>
-      {ships.map((ship) => (
-        <option key={ship.shipId} value={ship.shipId}>
-          {ship.shipName}
-        </option>
-      ))}
-    </select>
-  );
+    return {
+      props: {
+        ships,
+        users,
+      },
+    }
+  } catch (error: any) {
+    // In case of an error, you can return an error prop, or you can choose to handle it differently
+    return { props: { error: error.message } }
+  }
 }
 
-const ReportsSearch = () => {
-
-  // State to hold the search parameters
-  const [searchParams, setSearchParams] = useState({
-    shipId: '',
-    expeditionChiefScientistId: '',
-    principalInvestigatorId: '',
-    expeditionStartDate: '',
-    expeditionEndDate: '',
-    expeditionSequenceNumber: '',
-    sciObjectivesMet: '',
-    allEquipmentFunctioned: true,
-    diveNumber: '',
-    diveChiefScientistId: '',
-    diveStartDate: '',
-    diveEndDate: '',
-    keyword: ''
-
-  });
+const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
+  const [shipId, setShipId] = useState<number | null>(null)
+  const [expeditionChiefScientistId, setExpeditionChiefScientistId] = useState<
+    number | null
+  >(null)
+  const [principalInvestigatorId, setPrincipalInvestigatorId] = useState<
+    number | null
+  >(null)
+  const [expeditionStartDate, setExpeditionStartDate] = useState<string | null>(
+    null
+  )
+  const [expeditionEndDate, setExpeditionEndDate] = useState<string | null>(
+    null
+  )
+  const [expeditionSequenceNumber, setExpeditionSequenceNumber] = useState<
+    number | null
+  >(null)
+  const [sciObjectivesMet, setSciObjectivesMet] = useState<boolean | null>(null)
+  const [allEquipmentFunctioned, setAllEquipmentFunctioned] = useState<
+    boolean | null
+  >(null)
+  const [diveNumber, setDiveNumber] = useState<string | null>(null)
+  const [diveChiefScientistId, setDiveChiefScientistId] = useState<
+    number | null
+  >(null)
+  const [diveStartDate, setDiveStartDate] = useState<string | null>(null)
+  const [diveEndDate, setDiveEndDate] = useState<string | null>(null)
+  const [keyword, setKeyword] = useState<string | null>(null)
 
   //State to hold the search results
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<SearchResults[]>([])
 
   //Function to handle input changes and update search parameters
-  const handleInputChange = (e) => {
-    const {name, value} = e.target;
-    setSearchParams(prevParams => ({
-      ...prevParams,
-      [name]: value
-    }));
-  };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    switch (name) {
+      case 'expeditionStartDate':
+        setExpeditionStartDate(value)
+        break
+      case 'expeditionEndDate':
+        setExpeditionEndDate(value)
+        break
+      case 'expeditionSequenceNumber':
+        setExpeditionSequenceNumber(value ? parseInt(value, 10) : null)
+        break
+      case 'sciObjectivesMet':
+        setSciObjectivesMet(value === 'true')
+        break
+      case 'allEquipmentFunctioned':
+        setAllEquipmentFunctioned(value === 'true')
+        break
+      case 'diveNumber':
+        setDiveNumber(value)
+        break
+      case 'diveStartDate':
+        setDiveStartDate(value)
+        break
+      case 'diveEndDate':
+        setDiveEndDate(value)
+        break
+      case 'keyword':
+        setKeyword(value)
+        break
+      default:
+        break
+    }
+  }
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target
+    switch (name) {
+      case 'shipName':
+        setShipId(value ? parseInt(value, 10) : null)
+        break
+      case 'chiefScientist':
+        setExpeditionChiefScientistId(value ? parseInt(value, 10) : null)
+        break
+      case 'principalInvestigator':
+        setPrincipalInvestigatorId(value ? parseInt(value, 10) : null)
+        break
+      case 'diveChiefScientist':
+        setDiveChiefScientistId(value ? parseInt(value, 10) : null)
+        break
+      case 'sciObjectivesMet':
+        setSciObjectivesMet(value === 'true')
+        break
+      case 'allEquipmentFunctioned':
+        setAllEquipmentFunctioned(value === 'true')
+        break
+      default:
+        break
+    }
+  }
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    switch (name) {
+      case 'keyword':
+        setKeyword(value)
+        break
+      default:
+        break
+    }
+  }
 
   // Function to execute the search
-  const executeSearch = async () => {
+  const executeSearch = async (event: { preventDefault: () => void }) => {
+    event.preventDefault()
+    const searchParams = {
+      shipId: shipId,
+      expeditionChiefScientistId: expeditionChiefScientistId,
+      principalInvestigatorId: principalInvestigatorId,
+      expeditionStartDate: expeditionStartDate,
+      expeditionEndDate: expeditionEndDate,
+      expeditionSequenceNumber: expeditionSequenceNumber,
+      sciObjectivesMet: sciObjectivesMet,
+      allEquipmentFunctioned: allEquipmentFunctioned,
+      diveNumber: diveNumber,
+      diveChiefScientistId: diveChiefScientistId,
+      diveStartDate: diveStartDate,
+      diveEndDate: diveEndDate,
+      keyword: keyword,
+    }
+
+    console.log('search parameter: ', searchParams)
     try {
       const response = await fetch('http://localhost:8080/api/v1.1/search', {
+        credentials: 'include',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(searchParams),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const data = await response.json();
-      setSearchResults(data);
+      const data = await response.json()
+      console.log(data)
+      setSearchResults(data)
     } catch (error) {
-      console.error("Failed to search:", error);
+      console.error('Failed to search:', error)
     }
-  };
+  }
+
+  const [openExpeditionId, setOpenExpeditionId] = useState<number | null>(null)
+  const [openRovDiveIds, setOpenRovDiveIds] = useState<Set<string>>(new Set())
+
+  const toggleExpedition = (expeditionId: number) => {
+    setOpenExpeditionId(openExpeditionId === expeditionId ? null : expeditionId)
+  }
+
+  const toggleRovDive = (expeditionId: number, diveIndex: number) => {
+    const key = `${expeditionId}-${diveIndex}`
+    const newOpenRovDiveIds = new Set(openRovDiveIds)
+    if (newOpenRovDiveIds.has(key)) {
+      newOpenRovDiveIds.delete(key)
+    } else {
+      newOpenRovDiveIds.add(key)
+    }
+    setOpenRovDiveIds(newOpenRovDiveIds)
+  }
 
   const renderSearchResults = () => {
-    return searchResults.map(result => (
-      <div key={result.id}>
-        {/* Render your search result items here */}
-        <p>{result.name}</p>
-      </div>
-    ));
-  };
+    if (searchResults.length === 0) {
+      return <p> No Matching Results</p>
+    }
 
-  const handleShipChange = (e) => {
-    // Update the shipId in the searchParams state
-    setSearchParams((prevParams) => ({
-      ...prevParams,
-      shipId: e.target.value
-    }));
-  };
-  
+    return (
+      <div>
+        {searchResults.map((result: SearchResults) => (
+          <div key={result.expeditionId} className="mb-4">
+            <div
+              onClick={() => toggleExpedition(result.expeditionId)}
+              className="cursor-pointer font-bold text-lg"
+            >
+              {result.shipName} ({result.actualStartDate} -{' '}
+              {result.actualEndDate})
+              {openExpeditionId === result.expeditionId ? ' ↓' : ' →'}
+            </div>
+            {openExpeditionId === result.expeditionId && (
+              <div className="pl-4 border-l-2 border-gray-300">
+                <p>Purpose: {result.purpose}</p>
+                <p>Chief Scientist: {result.expeditionChiefScientistName}</p>
+                <p>
+                  Principal Investigator: {result.principalInvestigatorName}
+                </p>
+                <p>Start Date: {result.actualStartDate}</p>
+                <p>End Date: {result.actualEndDate}</p>
+                <p>Region: {result.regionDescription}</p>
+                <p>Equipment: {result.equipmentDescription}</p>
+                <p>Participants: {result.participants}</p>
+                <p>Accomplishments: {result.accomplishments}</p>
+                <h2 className="font-semibold text-md mt-2">Dives:</h2>
+                <div className="mt-2">
+                  {result.rovDives.map((dive, index) => (
+                    <div key={index} className="mb-2">
+                      <div
+                        onClick={() =>
+                          toggleRovDive(result.expeditionId, index)
+                        }
+                        className="cursor-pointer pl-4 border-l-2 border-gray-200"
+                      >
+                        <span className="font-semibold">{dive.rovName}</span> (
+                        {dive.diveStartDatetime} - {dive.diveEndDatetime}){' '}
+                        {openRovDiveIds.has(`${result.expeditionId}-${index}`)
+                          ? ' ↓'
+                          : ' →'}
+                      </div>
+                      {openRovDiveIds.has(
+                        `${result.expeditionId}-${index}`
+                      ) && (
+                        <div className="pl-8">
+                          <p>
+                            Dive Chief Scientist: {dive.diveChiefScientistName}
+                          </p>
+                          <p>Dive Number: {dive.diveNumber}</p>
+                          <p>Start Date/Time: {dive.diveStartDatetime}</p>
+                          <p>End Date/Time: {dive.diveEndDatetime}</p>
+
+                          <p>ROV Name: {dive.rovName}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <main>
       <div className="h-screen  overflow-y-auto ">
@@ -154,7 +367,20 @@ const ReportsSearch = () => {
                       className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4"
                     >
                       Ship Name:
-                      <ShipSelector onShipSelected={handleShipChange} />
+                      <select
+                        id="shipName"
+                        name="shipName"
+                        onChange={handleSelectChange}
+                        value={shipId || ''}
+                        className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                      >
+                        <option value="">(Select a Ship)</option>
+                        {ships.map((ship) => (
+                          <option key={ship.shipId} value={ship.shipId}>
+                            {ships && ship.shipName}
+                          </option>
+                        ))}
+                      </select>
                     </label>
                     <br />
 
@@ -165,13 +391,17 @@ const ReportsSearch = () => {
                       Chief Scientist:
                       <select
                         id="chiefScientist"
+                        name="chiefScientist"
+                        onChange={handleSelectChange}
+                        value={expeditionChiefScientistId || ''}
                         className="block appearance-none w-full bg-white border border-gray-400  hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                        
                       >
-                        <option value="">(Select One)</option>
-                        <option value="1">Scientist 1</option>
-                        <option value="2">Scientist 2</option>
-                        <option value="3">Scientist 3</option>
+                        <option value="">(Select Chief Scientist)</option>
+                        {users.map((user) => (
+                          <option key={user.userId} value={user.userId}>
+                            {`${user.firstName}`}
+                          </option>
+                        ))}
                       </select>
                     </label>
                     <br />
@@ -182,13 +412,19 @@ const ReportsSearch = () => {
                       Principal Investigator:
                       <select
                         id="principalInvestigator"
+                        name="principleInvestigator"
+                        onChange={handleSelectChange}
+                        value={principalInvestigatorId || ''}
                         className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                        
                       >
-                        <option value="">(Select One)</option>
-                        <option value="1">Investigator 1</option>
-                        <option value="2">Investigator 2</option>
-                        <option value="3">Investigator 3</option>
+                        <option value="">
+                          (Select Principal Investigator)
+                        </option>
+                        {users.map((user) => (
+                          <option key={user.userId} value={user.userId}>
+                            {`${user.firstName}`}
+                          </option>
+                        ))}
                       </select>
                     </label>
                   </div>
@@ -202,7 +438,9 @@ const ReportsSearch = () => {
                       <input
                         type="date"
                         id="startDate"
-                        name="startDate"
+                        name="expeditionStartDate"
+                        value={expeditionStartDate || ''}
+                        onChange={handleInputChange}
                         className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                       ></input>
                     </label>
@@ -215,12 +453,12 @@ const ReportsSearch = () => {
                       <input
                         type="date"
                         id="endDate"
-                        name="endDate"
+                        name="expeditionEndDate"
+                        value={expeditionEndDate || ''}
+                        onChange={handleInputChange}
                         className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
                       ></input>
                     </label>
-
-                    
                   </div>
                   <div className="flex">
                     <div className="flex-1 flex flex-col p-4 ">
@@ -232,8 +470,10 @@ const ReportsSearch = () => {
                           Sequence Number:
                           <input
                             id="SequenceNumberSearch"
+                            name="expeditionSequenceNumber"
+                            value={expeditionSequenceNumber || ''}
+                            onChange={handleInputChange}
                             className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            name="SequenceNumberSearch"
                             type="string"
                           ></input>
                         </label>
@@ -246,12 +486,14 @@ const ReportsSearch = () => {
                           Status(Objective Met):
                           <select
                             id="status"
+                            name="sciObjectivesMet"
+                            value={sciObjectivesMet?.toString() || ''}
+                            onChange={handleSelectChange}
                             className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            
                           >
                             <option value="">(Select One)</option>
-                            <option value="1">Complete</option>
-                            <option value="2">Incomplete</option>
+                            <option value="true">Complete</option>
+                            <option value="false">Incomplete</option>
                           </select>
                         </label>
                       </div>
@@ -260,99 +502,94 @@ const ReportsSearch = () => {
                     <div className="flex-1 flex flex-col p-4 ">
                       <div>
                         <label
-                          htmlFor="yyyyddd"
-                          className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
-                        >
-                          YYYYDDD:
-                          <input
-                            id="SequenceNumberSearch"
-                            className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            name="SequenceNumberSearch"
-                            type="string"
-                          ></input>
-                        </label>
-                      </div>
-                      <div>
-                        <label
                           htmlFor="status"
                           className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
                         >
                           Status(Equipment Functioned):
                           <select
                             id="status"
+                            name="allEquipmentFunctioned"
+                            value={allEquipmentFunctioned?.toString() || ''}
+                            onChange={handleSelectChange}
                             className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            
                           >
                             <option value="">(Select One)</option>
-                            <option value="1">Complete</option>
-                            <option value="2">Incomplete</option>
+                            <option value="true">Complete</option>
+                            <option value="false">Incomplete</option>
                           </select>
                         </label>
                       </div>
-                    </div> 
+                    </div>
                   </div>
                   <div className="flex flex-row">
-                  <label
+                    <label
                       htmlFor="chiefScientist"
                       className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4"
                     >
                       Dive Chief Scientist ID:
                       <select
                         id="chiefScientist"
+                        name="diveChiefScientistId"
+                        value={diveChiefScientistId || ''}
+                        onChange={handleSelectChange}
                         className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                        
                       >
-                        <option value="">(Select One)</option>
-                        <option value="1">Scientist 1</option>
-                        <option value="2">Scientist 2</option>
-                        <option value="3">Scientist 3</option>
+                        <option value="">(Select Dive Scientist)</option>
+                        {users.map((user) => (
+                          <option key={user.userId} value={user.userId}>
+                            {`${user.firstName}`}
+                          </option>
+                        ))}
                       </select>
                     </label>
                     <label
-                          htmlFor="SequenceNumberSearch"
-                          className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4 "
-                        >
-                          Dive Number:
-                          <input
-                            id="SequenceNumberSearch"
-                            className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                            name="SequenceNumberSearch"
-                            type="string"
-                          ></input>
-                        </label>
-                    
+                      htmlFor="SequenceNumberSearch"
+                      className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4 "
+                    >
+                      Dive Number:
+                      <input
+                        id="diveNumber"
+                        name="diveNumber"
+                        className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                        value={diveNumber || ''}
+                        onChange={handleInputChange}
+                        type="string"
+                      ></input>
+                    </label>
                   </div>
-                
                 </div>
               </div>
               <div className="flex flex-wrap">
-              <label
-                      htmlFor="diveStartDate"
-                      className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
-                    >
-                      Dive Start Time:
-                      <input
-                        type="date"
-                        id="startDate"
-                        name="startDate"
-                        className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
-                      ></input>
-                    </label>
+                <label
+                  htmlFor="diveStartDate"
+                  className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
+                >
+                  Dive Start Time:
+                  <input
+                    type="date"
+                    id="diveStartDate"
+                    name="divestartDate"
+                    value={diveStartDate || ''}
+                    onChange={handleInputChange}
+                    className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
+                  ></input>
+                </label>
 
-                    <label
-                      htmlFor="diveEndDate"
-                      className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
-                    >
-                      Dive End Time:
-                      <input
-                        type="date"
-                        id="endDate"
-                        name="endDate"
-                        className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
-                      ></input>
-                    </label>
+                <label
+                  htmlFor="diveEndDate"
+                  className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
+                >
+                  Dive End Time:
+                  <input
+                    type="date"
+                    id="diveEndDate"
+                    name="diveEndDate"
+                    value={diveEndDate || ''}
+                    onChange={handleInputChange}
+                    className="ml-2 w-40 border rounded-md p-2 shadow leading-tight focus:outline-none focus:shadow-outline"
+                  ></input>
+                </label>
 
-              
                 <div className="w-full pb-4">
                   <label
                     htmlFor="keywordSearch"
@@ -361,8 +598,10 @@ const ReportsSearch = () => {
                     Key-word or Phrase
                   </label>
                   <textarea
-                    id="keywordSearch"
-                    name="keywordSearch"
+                    id="keyword"
+                    name="keyword"
+                    value={keyword || ''}
+                    onChange={handleTextareaChange}
                     className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                     rows={3}
                     cols={30}
@@ -372,17 +611,20 @@ const ReportsSearch = () => {
               </div>
 
               <div className="flex flex-wrap">
-              {/* This creates a flexible space */}
-              <BackButton hrefLink="/PageSelect" buttonName="Back" />
-              <div className="flex-1"></div>{" "}
-              <button onClick={executeSearch}>Search</button>
-            </div>
+                {/* This creates a flexible space */}
+                <BackButton hrefLink="/PageSelect" buttonName="Back" />
+                <div className="flex-1"></div>{' '}
+                <button onClick={executeSearch}>Search</button>
+              </div>
+              <div className="search-results-container">
+                {renderSearchResults()}
+              </div>
             </form>
           </div>
         </div>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default ReportsSearch;
+export default ReportsSearch

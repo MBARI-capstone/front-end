@@ -21,13 +21,15 @@ const LogOutButton = () => {
   }
 
   return (
+  <div className= "group inline-block ">
     <button
       type="submit"
       onClick={handleLogout}
-      className="flex items-center justify-center h-12 px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100"
+      className=" h-12 px-6 border-2 border-gray-300 rounded-full w-max font-semibold tracking-wide text-gray-700 text-sm transition duration-300 group-hover:text-blue-600 sm:text-base  hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100"
     >
       Logout
     </button>
+    </div>
   )
 }
 

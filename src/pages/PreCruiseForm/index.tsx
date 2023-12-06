@@ -1,33 +1,34 @@
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, SetStateAction } from 'react'
 import { GetServerSideProps } from 'next'
 
-import Navbar from "../components/Navbar";
-import BackButton from "../components/BackButton";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Navbar from '../components/Navbar'
+import BackButton from '../components/BackButton'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 interface Ship {
-  shipId: number;
-  shipName: string;
-  shipDescription?: string;
+  shipId: number
+  shipName: string
+  shipDescription?: string
 }
 
 interface User {
-  userId: number;
-  firstName: string;
-  lastName: string;
+  userId: number
+  firstName: string
+  lastName: string
 }
 
 interface PreCruiseFormProps {
-  ships: Ship[];
-  users: User[];
-  error?: string;
+  ships: Ship[]
+  users: User[]
+  error?: string
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // Fetch your ships data here
   try {
-    const shipsRes = await fetch('http://localhost:8080/api/v1.1/data/allShips',
+    const shipsRes = await fetch(
+      'http://localhost:8080/api/v1.1/data/allShips',
       {
         credentials: 'include',
         headers: {
@@ -36,155 +37,187 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         },
       }
     )
-    
-    if (!shipsRes.ok) {
-      throw new Error(`Error: ${shipsRes.status}`);
-    }
-    const ships = await shipsRes.json();
-    console.log(ships);
 
-    const registeredUsersRes = await fetch('http://localhost:8080/api/v1.1/data/allUsers',
-    {
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Cookie: context.req.headers.cookie || '',
-      },
+    if (!shipsRes.ok) {
+      throw new Error(`Error: ${shipsRes.status}`)
     }
-    );
+    const ships = await shipsRes.json()
+    console.log(ships)
+
+    const registeredUsersRes = await fetch(
+      'http://localhost:8080/api/v1.1/data/allUsers',
+      {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: context.req.headers.cookie || '',
+        },
+      }
+    )
     if (!registeredUsersRes.ok) {
-      throw new Error(`Error: ${registeredUsersRes.status}`);
+      throw new Error(`Error: ${registeredUsersRes.status}`)
     }
-    const users = await registeredUsersRes.json();
-    console.log(users); 
+    const users = await registeredUsersRes.json()
+    console.log(users)
 
     return {
       props: {
         ships,
         users,
       },
-    };
-  } catch (error) {
+    }
+  } catch (error: any) {
     // In case of an error, you can return an error prop, or you can choose to handle it differently
-    return { props: { error: error.message } };
+    return { props: { error: error.message } }
   }
 }
-  
 
-const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) => {
+const PreCruiseForm: React.FC<PreCruiseFormProps> = ({
+  ships,
+  users,
+  error,
+}) => {
+  const [submissionStatus, setSubmissionStatus] = useState({
+    status: '',
+    message: '',
+  })
 
-  const [submissionStatus, setSubmissionStatus] = useState({ status: '', message: '' });
+  // State to store the selected ship ID
+  const [selectedShipId, setSelectedShipId] = useState<number | undefined>()
+  const [selectedUserId, setSelectedUserId] = useState<number | undefined>()
+  const [selectPrincipleID, setPrincipleId] = useState<number | undefined>()
+  const [purpose, setPurpose] = useState('')
+  const [scheduledStartDate, setScheduledStartDate] = useState('')
+  const [scheduledEndDate, setScheduledEndDate] = useState('')
+  const [equipmentDescription, setEquipmentDescription] = useState('')
+  const [participants, setParticipants] = useState('')
+  const [regionDescription, setRegionDescription] = useState('')
+  const [plannedTrackDescription, setPlannedTrackDescription] = useState('')
 
-   // State to store the selected ship ID
-  const [selectedShipId, setSelectedShipId] = useState<number | undefined>();
-  const [selectedUserId, setSelectedUserId] = useState<number | undefined>();
-  const [selectPrincipleID, setPrincipleId] = useState<number | undefined>();
-  const [purpose, setPurpose] = useState('');
-  const [scheduledStartDate, setScheduledStartDate] = useState('');
-  const [scheduledEndDate, setScheduledEndDate] = useState('');
-  const [equipmentDescription, setEquipmentDescription] = useState('');
-  const [participants, setParticipants] = useState('');
-  const [regionDescription, setRegionDescription] = useState('');
-  const [plannedTrackDescription, setPlannedTrackDescription] = useState('');
-
-  const handlePurposeChange = (e: { target: { value: SetStateAction<string>; }; }) => setPurpose(e.target.value);
-  const handleScheduledStartDateChange = (e: { target: { value: SetStateAction<string>; }; }) => setScheduledStartDate(e.target.value);
-  const handleScheduledEndDateChange = (e: { target: { value: SetStateAction<string>; }; }) => setScheduledEndDate(e.target.value);
-  const handleEquipmentDescriptionChange = (e: { target: { value: SetStateAction<string>; }; }) => setEquipmentDescription(e.target.value);
-  const handleParticipantsChange = (e: { target: { value: SetStateAction<string>; }; }) => setParticipants(e.target.value);
-  const handleRegionDescriptionChange = (e: { target: { value: SetStateAction<string>; }; }) => setRegionDescription(e.target.value);
-  const handlePlannedTrackDescriptionChange = (e: { target: { value: SetStateAction<string>; }; }) => setPlannedTrackDescription(e.target.value);
+  const handlePurposeChange = (e: {
+    target: { value: SetStateAction<string> }
+  }) => setPurpose(e.target.value)
+  const handleScheduledStartDateChange = (e: {
+    target: { value: SetStateAction<string> }
+  }) => setScheduledStartDate(e.target.value)
+  const handleScheduledEndDateChange = (e: {
+    target: { value: SetStateAction<string> }
+  }) => setScheduledEndDate(e.target.value)
+  const handleEquipmentDescriptionChange = (e: {
+    target: { value: SetStateAction<string> }
+  }) => setEquipmentDescription(e.target.value)
+  const handleParticipantsChange = (e: {
+    target: { value: SetStateAction<string> }
+  }) => setParticipants(e.target.value)
+  const handleRegionDescriptionChange = (e: {
+    target: { value: SetStateAction<string> }
+  }) => setRegionDescription(e.target.value)
+  const handlePlannedTrackDescriptionChange = (e: {
+    target: { value: SetStateAction<string> }
+  }) => setPlannedTrackDescription(e.target.value)
 
   const resetForm = () => {
-    setSelectedShipId(undefined);
-    setSelectedUserId(undefined);
-    setPrincipleId(undefined);
-    setPurpose('');
-    setScheduledStartDate('');
-    setScheduledEndDate('');
-    setEquipmentDescription('');
-    setParticipants('');
-    setRegionDescription('');
-    setPlannedTrackDescription('');
-  };
+    setSelectedShipId(undefined)
+    setSelectedUserId(undefined)
+    setPrincipleId(undefined)
+    setPurpose('')
+    setScheduledStartDate('')
+    setScheduledEndDate('')
+    setEquipmentDescription('')
+    setParticipants('')
+    setRegionDescription('')
+    setPlannedTrackDescription('')
+  }
 
-   const handleShipChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const shipId = parseInt(event.target.value, 10);
-    setSelectedShipId(shipId);
+  const handleShipChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const shipId = parseInt(event.target.value, 10)
+    setSelectedShipId(shipId)
+  }
 
-   };
+  const handleUserChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const userId = parseInt(event.target.value, 10)
+    setSelectedUserId(userId)
+  }
 
-   const handleUserChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const userId = parseInt(event.target.value, 10);
-    setSelectedUserId(userId);
-   };
+  const handlePrincipleChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const userId = parseInt(event.target.value, 10)
+    setPrincipleId(userId)
+  }
 
-   const handlePrincipleChange =  (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const userId = parseInt(event.target.value, 10);
-    setPrincipleId(userId);
-   };
-
-   const handleSubmit = async (event: { preventDefault: () => void; }) => {
-    event.preventDefault();
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
+    event.preventDefault()
     const preExpeditionData = {
       shipId: selectedShipId,
       chiefScientistId: selectedUserId,
       principalInvestigatorId: selectPrincipleID,
-      purpose,
-      scheduledStartDate,
-      scheduledEndDate,
-      equipmentDescription,
-      participants,
-      regionDescription,
-      plannedTrackDescription,
-    };
+      purpose: purpose,
+      scheduledStartDate: scheduledStartDate,
+      scheduledEndDate: scheduledEndDate,
+      equipmentDescription: equipmentDescription,
+      participants: participants,
+      regionDescription: regionDescription,
+      plannedTrackDescription: plannedTrackDescription,
+      isPreApproved: 0,
+    }
 
     try {
-      const response = await fetch('http://localhost:8080/api/v1.1/preExpedition', {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(preExpeditionData),
-      });
-  
+      const response = await fetch(
+        'http://localhost:8080/api/v1.1/preExpedition',
+        {
+          credentials: 'include',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(preExpeditionData),
+        }
+      )
+
       if (response.ok) {
         // Call the reset function here upon successful submission
-        resetForm();
-        setSubmissionStatus({ status: 'success', message: 'Form submitted successfully.' });
-        toast.success('Form submitted successfully.');
+        resetForm()
+        setSubmissionStatus({
+          status: 'success',
+          message: 'Form submitted successfully.',
+        })
+        toast.success('Form submitted successfully.')
       } else {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`HTTP error! Status: ${response.status}`)
       }
-    } catch (error) {
-      console.error('Error posting data:', error);
-      setSubmissionStatus({ status: 'error', message: error.message || 'Failed to submit the form.' });
-      toast.error('Failed to submit the form.');
+    } catch (error: any) {
+      console.error('Error posting data:', error)
+      setSubmissionStatus({
+        status: 'error',
+        message: error.message || 'Failed to submit the form.',
+      })
+      toast.error('Failed to submit the form.')
     }
-  };
+  }
 
-   
-
-   if (error) {
-    return <div>Error fetching ships: {error}</div>;
+  if (error) {
+    return <div>Error fetching ships: {error}</div>
   }
 
   return (
     <div className="h-screen  overflow-y-auto ">
       <Navbar currentPage="precruise" className="sticky top-0 z-10" />
       <div className="bg-custom-blue flex flex-col items-center justify-center font-sans text-cyan-900 pt-24">
+        {submissionStatus.message && (
+          <div
+            className={`alert ${
+              submissionStatus.status === 'success'
+                ? 'alert-success'
+                : 'alert-error'
+            }`}
+          >
+            {submissionStatus.message}
+          </div>
+        )}
+        <ToastContainer position="top-center" />
 
-      {submissionStatus.message && (
-        <div className={`alert ${submissionStatus.status === 'success' ? 'alert-success' : 'alert-error'}`}>
-          {submissionStatus.message}
-        </div>
-      )}
-      <ToastContainer
-      position="top-center"
-       />
-
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl">
+        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl">
           <h1 className="mb-2 text-2xl text-center text-cyan-900 font-bold">
             Pre-Cruise Form
           </h1>
@@ -208,12 +241,12 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                     className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
                     required
                   >
-                  <option value="">(Select a Ship)</option>
+                    <option value="">(Select a Ship)</option>
                     {ships.map((ship) => (
-                  <option key={ship.shipId} value={ship.shipId}>
-                    {ship.shipName}
-                  </option>
-                     ))}
+                      <option key={ship.shipId} value={ship.shipId}>
+                        {ship.shipName}
+                      </option>
+                    ))}
                   </select>
                 </label>
                 <br />
@@ -233,8 +266,8 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                   >
                     <option value="">(Select Chief Scientist)</option>
                     {users.map((user) => (
-                      <option  key={user.userId} value={user.userId}>
-                         {`${user.firstName}`}
+                      <option key={user.userId} value={user.userId}>
+                        {`${user.firstName}`}
                       </option>
                     ))}
                   </select>
@@ -255,8 +288,8 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                   >
                     <option value="">(Select Principal Investigator)</option>
                     {users.map((user) => (
-                      <option  key={user.userId} value={user.userId}>
-                         {`${user.firstName}`}
+                      <option key={user.userId} value={user.userId}>
+                        {`${user.firstName}`}
                       </option>
                     ))}
                   </select>
@@ -281,16 +314,13 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                 ></textarea>
               </label>
 
-              
               <label
                 htmlFor="scheduledStartDatetime"
                 className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
               >
                 Scheduled Start Date time:
                 <div className="relative max-w-sm">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                   
-                  </div>
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"></div>
                   <input
                     type="date"
                     id="scheduledEndDatetime"
@@ -338,7 +368,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                   required
                 ></textarea>
               </label>
-              
+
               <label
                 htmlFor="participants"
                 className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
@@ -356,7 +386,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                   required
                 ></textarea>
               </label>
-              
+
               <label
                 htmlFor="regionDescription"
                 className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
@@ -374,7 +404,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
                   required
                 ></textarea>
               </label>
-              
+
               <label
                 htmlFor="plannedTrackDescription"
                 className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
@@ -396,7 +426,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
             <div className="flex flex-wrap">
               {/* This creates a flexible space */}
               <BackButton hrefLink="/PageSelect" buttonName="Back" />
-              <div className="flex-1"></div>{" "}
+              <div className="flex-1"></div>{' '}
               <input
                 type="submit"
                 className="bg-cyan-900 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline mx-2"
@@ -407,7 +437,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({ ships, users, error }) =>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PreCruiseForm;
+export default PreCruiseForm
