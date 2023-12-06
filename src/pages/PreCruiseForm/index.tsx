@@ -230,7 +230,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({
               <div className="flex flex-wrap">
                 <label
                   htmlFor="shipName"
-                  className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4"
+                  className="block uppercase tracking-wide text-cyan-900 text-sm font-bold mb-2 flex-1 mr-4"
                 >
                   Ship Name:
                   <select
@@ -253,7 +253,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({
 
                 <label
                   htmlFor="chiefScientist"
-                  className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1 mr-4"
+                  className="block uppercase tracking-wide text-cyan-900 text-sm font-bold mb-2 flex-1 mr-4"
                 >
                   Chief Scientist:
                   <select
@@ -275,7 +275,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({
                 <br />
                 <label
                   htmlFor="principalInvestigator"
-                  className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2 flex-1"
+                  className="block uppercase tracking-wide text-cyan-900 text-sm font-bold mb-2 flex-1"
                 >
                   Principal Investigator:
                   <select
@@ -297,7 +297,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({
               </div>
               <label
                 htmlFor="purpose"
-                className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
+                className="block uppercase tracking-wide text-cyan-900 text-sm font-bold mb-2"
               >
                 Purpose for cruise:
                 <br />
@@ -316,7 +316,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({
 
               <label
                 htmlFor="scheduledStartDatetime"
-                className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
+                className="block uppercase tracking-wide text-cyan-900 text-sm font-bold mb-2"
               >
                 Scheduled Start Date time:
                 <div className="relative max-w-sm">
@@ -335,7 +335,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({
               <br />
               <label
                 htmlFor="scheduledEndDatetime"
-                className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
+                className="block uppercase tracking-wide text-cyan-900 text-sm font-bold mb-2"
               >
                 Scheduled End Date time:
                 <div className="relative max-w-sm">
@@ -353,7 +353,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({
               <br />
               <label
                 htmlFor="equipmentDescription"
-                className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
+                className="block uppercase tracking-wide text-cyan-900 text-sm font-bold mb-2"
               >
                 Equipment Description:
                 <textarea
@@ -371,7 +371,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({
 
               <label
                 htmlFor="participants"
-                className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
+                className="block uppercase tracking-wide text-cyan-900 text-sm font-bold mb-2"
               >
                 Participants:
                 <textarea
@@ -389,7 +389,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({
 
               <label
                 htmlFor="regionDescription"
-                className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
+                className="block uppercase tracking-wide text-cyan-900 text-sm font-bold mb-2"
               >
                 Region Description:
                 <textarea
@@ -407,7 +407,7 @@ const PreCruiseForm: React.FC<PreCruiseFormProps> = ({
 
               <label
                 htmlFor="plannedTrackDescription"
-                className="block uppercase tracking-wide text-cyan-900 text-md font-bold mb-2"
+                className="block uppercase tracking-wide text-cyan-900 text-sm font-bold mb-2"
               >
                 Planned Track Description:
                 <textarea
