@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { GetServerSideProps } from 'next'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import moment from 'moment'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const scientistsResponse = await fetch(
@@ -85,7 +86,7 @@ const Dives: React.FC<ScientistProps> = ({ scientists }) => {
       toast.success('Form submitted successfully.')
     }
   }
-
+  const formattedDiveEndDate = diveTimeEnd ? moment(diveTimeEnd).format('MM/DD/YYYY HH:mm') : '';
   return (
     <div className="h-screen overflow-y-auto">
       <Navbar currentPage="precruise" className="sticky top-0 z-10" />
