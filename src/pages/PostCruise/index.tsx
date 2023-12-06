@@ -63,10 +63,10 @@ const PostCruise: React.FC<PreExpeditionsProps> = ({ expeditions }) => {
     <div className="h-screen overflow-y-auto bg-custom-blue">
       <Navbar currentPage="postcruise" className="sticky top-0 z-10" />
       
-      <section className="container px-4 md:px-6 grid gap-10 items-start">
+      <section className="w-full max-w-5xl mx-auto px-4 md:px-6 grid gap-10">
       <br/>
       <br/>
-        <div className="grid gap-6 md:gap-8">
+        <div className="grid gap-6 md:gap-8 ">
         {expeditions &&
           expeditions.map((expedition: PreExpedition) => (
             <div key={expedition.expeditionId} className="bg-white p-6 rounded-lg shadow-md mb-4">
