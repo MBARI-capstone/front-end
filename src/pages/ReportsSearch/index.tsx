@@ -614,7 +614,7 @@ const ReportsSearch: React.FC<ShipandUserprops> = ({ ships, users, error }) => {
                 {/* This creates a flexible space */}
                 <BackButton hrefLink="/PageSelect" buttonName="Back" />
                 <div className="flex-1"></div>{' '}
-                <button onClick={executeSearch}>Search</button>
+                <button className="bg-custom-blue hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={executeSearch}>Search</button>
               </div>
               <div className="search-results-container">
                 {renderSearchResults()}
